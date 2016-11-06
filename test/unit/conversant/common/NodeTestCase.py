@@ -20,3 +20,15 @@ class NodeTestCase(unittest.TestCase):
         node = Node("node")
         self.assertIsNone(node.parent)
 
+    def test_add_child(self):
+        node = Node('1')
+        node.add_child('11')
+        self.assertEqual('11', node.children[0])
+
+    def test_add_children(self):
+        node = Node('1')
+        node.add_child('11')
+        node.add_child('12')
+        self.assertEqual(2, len(node.children))
+        self.assertEqual('11', node.children[0])
+        self.assertEqual('12', node.children[1])

@@ -3,7 +3,7 @@ import uuid
 
 class Node(object):
     id = None
-    
+
     def __init__(self, tag=None, nid=None, data=None):
         # sets the node identifier
         self.set_id(nid)
@@ -48,13 +48,13 @@ class Node(object):
         else:
             return False
 
-    def set_parent(self, node):
+    def set_parent(self, nid):
         """Sets the patent"""
-        self.parent = node
+        self.parent = nid
 
-    def add_child(self, node):
+    def add_child(self, nid):
         """Adds a child"""
-        self.children.append(node)
+        self.children.append(nid)
 
     def __repr__(self):
         name = self.__class__.__name__
