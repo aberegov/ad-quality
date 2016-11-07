@@ -8,6 +8,7 @@ from unit.conversant.common.SQLCommanderTestCase import SQLCommanderTestCase
 from unit.conversant.common.SQLShellTestCase import SQLShellTestCase
 from unit.conversant.common.TreeTestCase import TreeTestCase
 from unit.conversant.common.NodeTestCase import NodeTestCase
+from unit.conversant.common.SlidingBufferTestCase import SlidingBufferTestCase
 
 class ConversantTestSuite(unittest.TestCase):
     def suite(self):
@@ -20,6 +21,7 @@ class ConversantTestSuite(unittest.TestCase):
             ,SQLShellTestCase().suite()
             ,TreeTestCase.suite()
             ,NodeTestCase.suite()
+            ,SlidingBufferTestCase.suite()
         ])
 
         return suite

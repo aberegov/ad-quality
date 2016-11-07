@@ -1,11 +1,11 @@
 import unittest
 from decimal import Decimal
-from com.conversant.viewability.MultiKeyViewabilityPredictor import MultiKeyViewabilityPredictor
+from com.conversant.viewability.MultiKeyPredictor import MultiKeyPredictor
 
 
-class MultiKeyViewabilityPredictorTestCase(unittest.TestCase):
+class MultiKeyPredictorTestCase(unittest.TestCase):
     def setUp(self):
-        self.predictor = MultiKeyViewabilityPredictor()
+        self.predictor = MultiKeyPredictor()
 
     def tearDown(self):
         self.predictor.clear()
@@ -13,7 +13,8 @@ class MultiKeyViewabilityPredictorTestCase(unittest.TestCase):
     def test_predict(self):
         self.predictor.build()
         self.assertEqual(round(Decimal(0.15838), 5),
-                         round(self.predictor.predict([
+                         round(self.predictor.predict('viewability',
+                            [
                              '14200',
                              '558570',
                              '-1',
