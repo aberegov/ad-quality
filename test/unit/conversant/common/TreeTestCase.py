@@ -52,3 +52,7 @@ class TreeTestCase(unittest.TestCase):
         self.tree.build_path(['011', '111', '1111', '11111'], '12345')
         node = self.tree.node_by_path(['011', '111', '1111', '11111'])
         self.assertEquals('12345', node.data)
+
+    def test_create_tree(self):
+        self.tree.add_node(Node('root'))
+        self.tree.build_path(['14200', '558570', '-1', '17', '-1', '-1', '-1', '-1', '-1', '-1'], 0.5)

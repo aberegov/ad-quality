@@ -2,7 +2,7 @@
 -- Create viewability predictors table
 --
 CREATE TABLE
-    viewability_predictors
+    adquality.viewability_predictors
     (
         vendor_id INTEGER NOT NULL,
         network_id INTEGER,
@@ -19,3 +19,5 @@ CREATE TABLE
         predictor_value NUMERIC(12,5),
         confidence_score NUMERIC(12,5)
     );
+
+ALTER TABLE adquality.viewability_predictors OWNER TO aberegov;

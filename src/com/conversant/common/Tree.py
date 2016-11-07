@@ -100,6 +100,7 @@ class Tree(object):
         return self[current]
 
     def build_path(self, tags, data):
+        node = None
         current = self.root
         for tag in tags:
             if tag not in self.tags_index[current]:
@@ -108,6 +109,13 @@ class Tree(object):
                 current = node.identifier
             else:
                 current = self.tags_index[current][tag]
+
+        if node is None:
+            print(tags)
+            print(len(self.nodes))
+            print(self.nodes[current])
+            raise Exception("Can't build a tree path for %s" % str(tags))
+
         node.data = data
         return node
 
