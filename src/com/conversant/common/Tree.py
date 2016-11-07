@@ -142,7 +142,7 @@ class Tree(object):
 
     def __print_backend(self, nid=None, level=ROOT, filtering=None, line_type='ascii-ex', func=print):
         for prefix, node in self.__get(nid, level, filtering, line_type):
-            label = "%s[%s]" % (node.tag, node.identifier)
+            label = "%s[%s] %s" % (node.tag, node.identifier, node.data if node.data is not None else '')
             func('{0}{1}'.format(prefix, label).encode('utf-8'))
 
     def __get(self, nid, level, filtering, line_type):

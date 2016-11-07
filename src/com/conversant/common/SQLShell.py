@@ -1,6 +1,6 @@
-
 from com.conversant.common.SQLCommander import SQLCommander
 from com.conversant.common.EnvConfig import EnvConfig
+
 
 class SQLShell:
     command = None
@@ -24,7 +24,3 @@ class SQLShell:
         if self.command is not None:
             self.command.close()
             self.command = None
-
-
-
-# http://stackoverflow.com/questions/3009935/looking-for-a-good-python-tree-data-structure
