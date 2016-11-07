@@ -1,44 +1,135 @@
-import sys
-import json
 from copy import deepcopy
-from io import BytesIO
+from com.conversant.common.Node import Node
+
 
 class NodeIdNotFound(Exception):
     """Exception thrown if a node's identifier is unknown"""
     pass
 
 
+class NodeIdDuplicate(Exception):
+    pass
+
+
+class RootNodeAlreadyExists(Exception):
+    pass
+
+
 class Tree(object):
-    (ROOT, DEPTH, WIDTH, ZIGZAG) = list(range(4))
+    (ROOT, DEPTH, WIDTH) = list(range(3))
 
     def __init__(self, tree=None, deep=False):
-        # Nodes: dictionary id: node
-        self._nodes = {}
+        """ Create a new tree as a new or cloned if the tree parameter is specified
+        Args:
+            :param tree (Tree): A tree to clone from if it is specified
+            :param deep (bool): Indicates whether to perform a deep copy
+        """
+        self.nodes_dict = {}
+
+        self.tags_index = {}
 
         self.root = None
 
         if tree is not None:
             self.root = tree.root
             if deep:
-                for nid in tree._nodes:
-                    self._nodes[nid] = deepcopy(tree._nodes[nid])
+                for nid in tree.nodes:
+                    self.nodes_dict[nid] = deepcopy(tree.nodes[nid])
                 else:
-                    self._nodes = tree._nodes
+                    self.nodes_dict = tree.nodes
 
-    def __contains__(self, item):
-        return [node for node in self._nodes if node == item]
+    @property
+    def nodes(self):
+        """
+        :return: a dict form of nodes in a tree: {id: node_instance}
+        """
+        return self.nodes_dict
+
+    def get_node(self, nid):
+        """
+        Returns a node with the given identifier
+        :param nid: the node identifier
+        :return: The node object or None
+        """
+        if nid is None or not self.__contains__(nid):
+            return None
+        return self.nodes_dict[nid]
+
+    def add_node(self, node, parent=None):
+        """
+        Adds a new node to the tree
+        :param node: the node to add
+        :param parent: the identifier of a parent node
+        :return:
+        """
+        if not isinstance(node, Node):
+            raise OSError("The node parameter must be of Node type")
+
+        if node.identifier in self.nodes_dict:
+            raise NodeIdDuplicate("The node (id=%s tag=%s) is already in the tree" % (node.identifier, node.tag))
+
+        if parent is None:
+            if self.root is not None:
+                raise RootNodeAlreadyExists("The tree already has a root (id=%s)" % self.root)
+            else:
+                self.root = node.identifier
+        elif parent not in self.nodes_dict:
+            raise NodeIdNotFound("The parent with ID %s is not in tree" % parent)
+
+        self.nodes_dict.update({node.identifier: node})
+        self.tags_index.update({node.identifier: {}})
+
+        if parent is not None:
+            self.nodes_dict[parent].add_child(node.identifier)
+            self.tags_index[parent].update({node.tag: node.identifier})
+            node.set_parent(parent)
+
+    def node_by_path(self, tags, default='-1'):
+        """
+        Returns a node for the given tags path. Since tags are not unique, the only first match is returned
+        :param tags: the path
+        :param default:
+        :return:
+        """
+
+        current = self.root
+        for tag in tags:
+            tag = tag if tag in self.tags_index[current] else default
+            current = self.tags_index[current][tag]
+
+        return self[current]
+
+    def build_path(self, tags, data):
+        current = self.root
+        for tag in tags:
+            if tag not in self.tags_index[current]:
+                node = Node(tag)
+                self.add_node(node, current)
+                current = node.identifier
+            else:
+                current = self.tags_index[current][tag]
+        node.data = data
+        return node
+
+    def __contains__(self, key):
+        """
+        Indicates whether the tree contains the given key
+        :param key: the node identifier
+        :return: True of the tree contains the given item; otherwise returns False
+        """
+        return [nid for nid in self.nodes_dict if nid == key]
 
     def __getitem__(self, key):
         try:
-            return self._nodes[key]
+            return self.nodes_dict[key]
         except KeyError:
             raise NodeIdNotFound("Node % s is not found in the tree" % key)
 
     def __len__(self):
-        return len(self._nodes)
+        return len(self.nodes_dict)
 
     def __setitem__(self, key, value):
-        self._nodes.update({key: value})
+        self.nodes_dict.update({key: value})
 
     def __str__(self):
         self.reader = ""

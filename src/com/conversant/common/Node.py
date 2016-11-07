@@ -4,15 +4,15 @@ import uuid
 class Node(object):
     id = None
 
-    def __init__(self, tag=None, nid=None, data=None):
+    def __init__(self, name=None, nid=None, data=None):
         # sets the node identifier
         self.set_id(nid)
 
         # set human-readable tag
-        if tag is None:
-            self.tag = self.id
+        if name is None:
+            self.name = self.id
         else:
-            self.tag = tag
+            self.name = name
 
         # the parent is not defined yet
         self.parent = None
@@ -29,6 +29,10 @@ class Node(object):
             self.id = str(uuid.uuid1())
         else:
             self.id = nid
+
+    @property
+    def tag(self):
+        return self.name
 
     @property
     def identifier(self):
