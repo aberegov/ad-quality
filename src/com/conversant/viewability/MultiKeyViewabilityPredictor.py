@@ -1,10 +1,9 @@
-import unittest
 from com.conversant.common.DatabaseTree import DatabaseTree
 
 
-class DatabaseTreeTestCase(unittest.TestCase):
-    def setUp(self):
-        self.tree = DatabaseTree("""
+class MultiKeyViewabilityPredictor(DatabaseTree):
+        def __init__(self):
+            super().__init__("""
         SELECT
             network_id::varchar,
             seller_id,
@@ -23,9 +22,5 @@ class DatabaseTreeTestCase(unittest.TestCase):
             predictor_type = 'viewability'
             """)
 
-    def tearDown(self):
-        self.tree.clear()
-        del self.tree
-
-    def test_build(self):
-        self.tree.build()
+        def predict(self, keys):
+            return self.node_by_path(keys).data

@@ -8,6 +8,7 @@ class TreeTestCase(unittest.TestCase):
         self.tree = Tree()
 
     def tearDown(self):
+        self.tree.clear()
         del self.tree
 
     def init_tree(self):

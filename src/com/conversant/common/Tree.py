@@ -193,4 +193,6 @@ class Tree(object):
                     yield item
                 is_last.pop()
 
-
+    def clear(self):
+        self.tags_index.clear()
+        self.nodes_dict.clear()
