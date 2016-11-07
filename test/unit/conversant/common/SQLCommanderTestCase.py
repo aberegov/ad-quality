@@ -3,14 +3,15 @@ import unittest
 from com.conversant.common.SQLCommander import SQLCommander
 from com.conversant.common.EnvConfig import EnvConfig
 
+
 class SQLCommanderTestCase(unittest.TestCase):
     def setUp(self):
         config = EnvConfig()
         self.command = SQLCommander(
-            config.get('database','login'),
-            config.get('database','password'),
-            config.get('database','host'),
-            config.get('database','database'))
+            config.get('database', 'login'),
+            config.get('database', 'password'),
+            config.get('database', 'host'),
+            config.get('database', 'database'))
 
     def tearDown(self):
         self.command.close();

@@ -1,7 +1,6 @@
-
 import unittest
-
 from com.conversant.common.SQLShell import SQLShell
+
 
 class SQLShellTestCase(unittest.TestCase):
     def setUp(self):

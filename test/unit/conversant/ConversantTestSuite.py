@@ -6,6 +6,8 @@ from unit.conversant.common.URLResourceTestCase import URLResourceTestCase
 from unit.conversant.common.EnvConfigTestCase import EnvConfigTestCase
 from unit.conversant.common.SQLCommanderTestCase import SQLCommanderTestCase
 from unit.conversant.common.SQLShellTestCase import SQLShellTestCase
+from unit.conversant.common.TreeTestCase import TreeTestCase
+from unit.conversant.common.NodeTestCase import NodeTestCase
 
 class ConversantTestSuite(unittest.TestCase):
     def suite(self):
@@ -16,6 +18,8 @@ class ConversantTestSuite(unittest.TestCase):
             ,BigExpertSegmentsTestCase().suite()
             ,SQLCommanderTestCase().suite()
             ,SQLShellTestCase().suite()
+            ,TreeTestCase.suite()
+            ,NodeTestCase.suite()
         ])
 
         return suite
