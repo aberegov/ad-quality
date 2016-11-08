@@ -21,5 +21,8 @@ class MultiKeyPredictor(DatabaseTree):
             adquality.viewability_predictors
             """)
 
-        def predict(self, type, keys):
-            return self.node_by_path([type] + keys).data
+        def predict(self, predictor_type, keys):
+            return self.node_by_path([predictor_type] + keys).data
+
+        def predict_all(self, predictor_types, keys):
+            return [self.predict(t, keys) for t in predictor_types]
