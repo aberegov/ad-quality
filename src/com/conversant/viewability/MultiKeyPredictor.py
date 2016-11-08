@@ -15,7 +15,7 @@ class MultiKeyPredictor(DatabaseTree):
             'browser_version'
         ])
 
-        def __init__(self, source='adquality.viewability_predictors'):
+        def __init__(self, source='adquality.predictors'):
             super().__init__("SELECT predictor_type, {0}, predictor_value FROM {1}".format(str(self.multi_key), source))
 
         def __setitem__(self, name, keys):
@@ -25,7 +25,10 @@ class MultiKeyPredictor(DatabaseTree):
             return [row[0]] + self.multi_key.reorder(row[0], row[1:-1]) + [row[-1]]
 
         def predict(self, name, keys):
-            return self.node_by_path([name] + self.multi_key.reorder(name, keys)).data
+            try:
+                return self.node_by_path([name] + self.multi_key.reorder(name, keys)).data
+            except KeyError:
+                raise Exception("Can't find predictor for: %s %s " % (name, str(keys)))
 
         def predict_all(self, predictors, keys):
             return [self.predict(t, keys) for t in predictors]

@@ -8,7 +8,7 @@ class KeyHierarchy:
         return [i for i in map(lambda x: [i for i,j in enumerate(self.base_keys) if j == x][0], keys)]
 
     def set(self, name, keys):
-        self.hierarchies[name] = self.index(keys)
+        self.hierarchies.update({name: self.index(keys)})
 
     def reorder(self, hierarchy, data):
         if hierarchy in self.hierarchies:

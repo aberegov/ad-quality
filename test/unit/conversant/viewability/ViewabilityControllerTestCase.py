@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class ViewabilityControllerTestCase(unittest.TestCase):
     def setUp(self):
-        self.controller = ViewabilityController(goal=0.5, predictor=self, period=100, latency=10, window=10)
+        self.controller = ViewabilityController(goal=0.5, predictor=self, n=100, l=10, w=10)
 
     def tearDown(self):
         del self.controller

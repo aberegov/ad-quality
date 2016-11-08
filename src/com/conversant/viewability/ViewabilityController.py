@@ -5,19 +5,19 @@ class ViewabilityController:
     (VIEW, MEASURE) = range(2)
     predictor_types = ['viewability', 'measureability']
 
-    def __init__(self, goal, predictor, period=1000000, window=10000, latency=10000, e=0.1):
+    def __init__(self, goal, predictor, n=1000000, w=10000, l=10000, e=0.1):
         self.threshold = goal
         self.goal = goal
         self.e = e
-        self.period = period
+        self.n = n
         self.predictor = predictor
-        self.actual = [SlidingBuffer(latency), SlidingBuffer(latency)]
-        self.estimate = [SlidingBuffer(window), SlidingBuffer(window)]
+        self.actual = [SlidingBuffer(l), SlidingBuffer(l)]
+        self.estimate = [SlidingBuffer(w), SlidingBuffer(w)]
         self.impressions = 0
 
     @property
     def elapsed(self):
-        return self.impressions / self.period
+        return self.impressions / self.n
 
     @property
     def actual_rate(self):
@@ -40,7 +40,7 @@ class ViewabilityController:
             if self.historical_rate is not None else self.goal
 
     def process_event(self, imp, output):
-        if self.impressions > self.period:
+        if self.impressions > self.n:
             return
 
         # make predictions
