@@ -14,4 +14,8 @@ class DatabaseTree(Tree):
         shell.execute(self.sql, {}, self.process_row)
 
     def process_row(self, row):
+        row = self.prepare_row(row)
         self.build_path(row[:-1], row[-1])
+
+    def prepare_row(self, row):
+        return row

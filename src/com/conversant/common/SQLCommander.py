@@ -15,15 +15,19 @@ class SQLCommander:
             self.connection.close()
             self.connection = None
 
-    def execute(self, sql, params, processor):
+    def execute(self, sql, params, processor, max_rows=-1):
         if self.connection is None:
             raise Exception("Connection is closed")
 
         cursor = self.connection.cursor()
         cursor.execute(sql, params)
+        row_num = 0
 
         try:
             for rec in cursor:
+                row_num += 1
+                if max_rows != -1 and row_num > max_rows:
+                    break
                 processor(rec)
         finally:
             cursor.close()

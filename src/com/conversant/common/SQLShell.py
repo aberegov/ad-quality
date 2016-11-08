@@ -14,8 +14,8 @@ class SQLShell:
             config.database_database)
         config.clear()
 
-    def execute(self, sql, params, processor):
-        self.command.execute(sql, params, processor)
+    def execute(self, sql, params, processor,max_rows=-1):
+        self.command.execute(sql, params, processor, max_rows)
 
     def __del__(self):
         self.close()
