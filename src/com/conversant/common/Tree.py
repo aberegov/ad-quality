@@ -91,12 +91,15 @@ class Tree(object):
         :param default:
         :return:
         """
-
         current = self.root
         for tag in tags:
-            tag = tag if tag in self.tags_index[current] else default
-            current = self.tags_index[current][tag]
-
+            steps = self.tags_index[current]
+            if tag in steps:
+                current = steps[tag]
+            elif default in steps:
+                current = steps[default]
+            else:
+                raise KeyError('Cannot find a match for %s from %s (%s)' % (tag, str(tags), str(self.parent(current))))
         return self[current]
 
     def build_path(self, tags, data):
@@ -111,13 +114,14 @@ class Tree(object):
                 current = self.tags_index[current][tag]
 
         if node is None:
-            print(tags)
-            print(len(self.nodes))
-            print(self.nodes[current])
             raise Exception("Can't build a tree path for %s" % str(tags))
 
         node.data = data
         return node
+
+    def parent(self, nid):
+        node = self[nid]
+        return self[node.parent]
 
     def __contains__(self, key):
         """
