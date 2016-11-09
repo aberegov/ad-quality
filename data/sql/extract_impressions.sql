@@ -20,4 +20,4 @@ where dmm_date > current_date - 2
         and length(ext_channel_id) <= 4
         and ext_channel_id ~ E'^\\d+$'
                 and ext_channel_id::bigint & 15 = 1
-limit 100000
+limit 1000000
