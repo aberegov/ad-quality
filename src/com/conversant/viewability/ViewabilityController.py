@@ -19,6 +19,11 @@ class ViewabilityController:
         return float(self.impressions / self.n)
 
     @property
+    def actual_window(self):
+        return float(self.actual_in_view.sum / self.actual_measure.sum) \
+            if self.actual_measure.sum > 0 else None
+
+    @property
     def actual_rate(self):
         return float(self.actual_in_view.total / self.actual_measure.total) \
             if self.actual_measure.total > 0 else None
