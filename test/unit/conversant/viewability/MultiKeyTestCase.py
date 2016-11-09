@@ -18,7 +18,7 @@ class MultiKeyTestCase(unittest.TestCase):
         ])
 
     def test_assign(self):
-        self.hierarchies['name'] =  [
+        self.hierarchies['name'] = [
             'ad_format_id',
             'device',
             'os',
@@ -30,3 +30,30 @@ class MultiKeyTestCase(unittest.TestCase):
             'site_id',
             'ad_position'
         ]
+
+        self.assertListEqual(
+            [
+                'ad_format_id',
+                'device',
+                'os',
+                'browser_name',
+                'browser_version',
+                'media_size',
+                'network_id',
+                'seller_id',
+                'site_id',
+                'ad_position'
+            ],
+            self.hierarchies.reorder('name', [
+                'ad_format_id',
+                'network_id',
+                'seller_id',
+                'site_id',
+                'media_size',
+                'ad_position',
+                'device',
+                'os',
+                'browser_name',
+                'browser_version'
+            ] ))
+

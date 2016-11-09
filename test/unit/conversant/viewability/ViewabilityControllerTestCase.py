@@ -6,6 +6,7 @@ from com.conversant.viewability.ViewabilityController import ViewabilityControll
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+
 class ViewabilityControllerTestCase(unittest.TestCase):
     def setUp(self):
         self.controller = ViewabilityController(goal=0.5, predictor=self, n=100, l=10, w=10)

@@ -1,6 +1,7 @@
 from com.conversant.common.DatabaseTree import DatabaseTree
 from com.conversant.viewability.MultiKey import MultiKey
 
+
 class MultiKeyPredictor(DatabaseTree):
         multi_key = MultiKey([
             'ad_format_id',
@@ -25,7 +26,7 @@ class MultiKeyPredictor(DatabaseTree):
             return [row[0]] + self.multi_key.reorder(row[0], row[1:-1]) + [row[-1]]
 
         def predict(self, name, keys):
-            return self.node_by_path([name] + self.multi_key.reorder(name, keys)).data
+            return self.path_best_match([name] + self.multi_key.reorder(name, keys))
 
         def predict_all(self, predictors, keys):
             return [self.predict(t, keys) for t in predictors]

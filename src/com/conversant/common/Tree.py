@@ -2,12 +2,12 @@ from copy import deepcopy
 from com.conversant.common.Node import Node
 
 
-class NodeIdNotFound(Exception):
+class NodeNotFound(Exception):
     """Exception thrown if a node's identifier is unknown"""
     pass
 
 
-class NodeIdDuplicate(Exception):
+class NodeDuplicate(Exception):
     pass
 
 
@@ -24,9 +24,9 @@ class Tree(object):
             :param tree (Tree): A tree to clone from if it is specified
             :param deep (bool): Indicates whether to perform a deep copy
         """
-        self.nodes_dict = {}
+        self.nodes_map = {}
 
-        self.tags_index = {}
+        self.child_tag = {}
 
         self.root = None
 
@@ -34,16 +34,16 @@ class Tree(object):
             self.root = tree.root
             if deep:
                 for nid in tree.nodes:
-                    self.nodes_dict[nid] = deepcopy(tree.nodes[nid])
+                    self.nodes_map[nid] = deepcopy(tree.nodes[nid])
                 else:
-                    self.nodes_dict = tree.nodes
+                    self.nodes_map = tree.nodes
 
     @property
     def nodes(self):
         """
         :return: a dict form of nodes in a tree: {id: node_instance}
         """
-        return self.nodes_dict
+        return self.nodes_map
 
     def get_node(self, nid):
         """
@@ -53,7 +53,7 @@ class Tree(object):
         """
         if nid is None or not self.__contains__(nid):
             return None
-        return self.nodes_dict[nid]
+        return self.nodes_map[nid]
 
     def add_node(self, node, parent=None):
         """
@@ -65,24 +65,53 @@ class Tree(object):
         if not isinstance(node, Node):
             raise OSError("The node parameter must be of Node type")
 
-        if node.identifier in self.nodes_dict:
-            raise NodeIdDuplicate("The node (id=%s tag=%s) is already in the tree" % (node.identifier, node.tag))
+        if node.identifier in self.nodes_map:
+            raise NodeDuplicate("The node (id=%s tag=%s) is already in the tree" % (node.identifier, node.tag))
 
         if parent is None:
             if self.root is not None:
                 raise RootNodeAlreadyExists("The tree already has a root (id=%s)" % self.root)
             else:
                 self.root = node.identifier
-        elif parent not in self.nodes_dict:
-            raise NodeIdNotFound("The parent with ID %s is not in tree" % parent)
+        elif parent not in self.nodes_map:
+            raise NodeNotFound("The parent with ID %s is not in tree" % parent)
 
-        self.nodes_dict.update({node.identifier: node})
-        self.tags_index.update({node.identifier: {}})
+        self.nodes_map.update({node.identifier: node})
+        self.child_tag.update({node.identifier: {}})
 
         if parent is not None:
-            self.nodes_dict[parent].add_child(node.identifier)
-            self.tags_index[parent].update({node.tag: node.identifier})
+            self.nodes_map[parent].add_child(node.identifier)
+            self.child_tag[parent].update({node.tag: node.identifier})
             node.set_parent(parent)
+
+    def path_best_match(self, tags):
+        (scores, data) = self.path_traverse(tags, self.root)
+        a = [int(s, 2) for s in scores]
+        return data[a.index(max(a))]
+
+    def path_traverse(self, tags, nid, index=0, score='0', default='-1'):
+        if index >= len(tags):
+            return [score], [self[nid].data]
+
+        scores = []
+        data = []
+
+        tag = tags[index]
+        downstream = self.child_tag[nid]
+
+        if tag in downstream:
+            s, d = self.path_traverse(tags, downstream[tag], index + 1, '1' + score)
+            if s is not None:
+                scores.extend(s)
+                data.extend(d)
+
+        if default in downstream:
+            s, d = self.path_traverse(tags, downstream[default], index + 1, '0' + score)
+            if s is not None:
+                scores.extend(s)
+                data.extend(d)
+
+        return (scores, data) if len(scores) > 0 else (None, None)
 
     def node_by_path(self, tags, default='-1'):
         """
@@ -91,27 +120,27 @@ class Tree(object):
         :param default:
         :return:
         """
-        current = self.root
+        nid = self.root
         for tag in tags:
-            steps = self.tags_index[current]
-            if tag in steps:
-                current = steps[tag]
-            elif default in steps:
-                current = steps[default]
+            downstream = self.child_tag[nid]
+            if tag in downstream:
+                nid = downstream[tag]
+            elif default in downstream:
+                nid = downstream[default]
             else:
-                raise KeyError('Cannot find a match for %s from %s (%s)' % (tag, str(tags), str(self.parent(current))))
-        return self[current]
+                raise KeyError('Cannot find a match for %s from %s (%s)' % (tag, str(tags), str(self.parent_node(nid))))
+        return self[nid]
 
     def build_path(self, tags, data):
         node = None
-        current = self.root
+        nid = self.root
         for tag in tags:
-            if tag not in self.tags_index[current]:
+            if tag not in self.child_tag[nid]:
                 node = Node(tag)
-                self.add_node(node, current)
-                current = node.identifier
+                self.add_node(node, nid)
+                nid = node.identifier
             else:
-                current = self.tags_index[current][tag]
+                nid = self.child_tag[nid][tag]
 
         if node is None:
             raise Exception("Can't build a tree path for %s" % str(tags))
@@ -119,9 +148,9 @@ class Tree(object):
         node.data = data
         return node
 
-    def parent(self, nid):
+    def parent_node(self, nid):
         node = self[nid]
-        return self[node.parent]
+        return self[node.parent_node]
 
     def __contains__(self, key):
         """
@@ -129,19 +158,19 @@ class Tree(object):
         :param key: the node identifier
         :return: True of the tree contains the given item; otherwise returns False
         """
-        return [nid for nid in self.nodes_dict if nid == key]
+        return [nid for nid in self.nodes_map if nid == key]
 
     def __getitem__(self, key):
         try:
-            return self.nodes_dict[key]
+            return self.nodes_map[key]
         except KeyError:
-            raise NodeIdNotFound("Node % s is not found in the tree" % key)
+            raise NodeNotFound("Node % s is not found in the tree" % key)
 
     def __len__(self):
-        return len(self.nodes_dict)
+        return len(self.nodes_map)
 
     def __setitem__(self, key, value):
-        self.nodes_dict.update({key: value})
+        self.nodes_map.update({key: value})
 
     def __str__(self):
         self.reader = ""
@@ -198,5 +227,5 @@ class Tree(object):
                 is_last.pop()
 
     def clear(self):
-        self.tags_index.clear()
-        self.nodes_dict.clear()
+        self.child_tag.clear()
+        self.nodes_map.clear()
