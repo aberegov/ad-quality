@@ -16,7 +16,7 @@ class MultiKeyPredictor(DatabaseTree):
             'browser_version'
         ])
 
-        def __init__(self, source='adquality.predictors'):
+        def __init__(self, source='ad_quality.predictors'):
             super().__init__("SELECT predictor_type, {0}, predictor_value FROM {1}".format(str(self.multi_key), source))
 
         def __setitem__(self, name, keys):

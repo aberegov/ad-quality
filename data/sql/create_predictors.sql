@@ -2,7 +2,7 @@
 -- Create predictors table
 --
 CREATE TABLE
-    adquality.predictors
+    ad_quality.predictors
     (
         vendor_id INTEGER NOT NULL,
         network_id INTEGER,
@@ -20,4 +20,4 @@ CREATE TABLE
         confidence_score NUMERIC(12,5)
     );
 
-ALTER TABLE adquality.predictors OWNER TO aberegov;
+ALTER TABLE ad_quality.predictors OWNER TO aberegov;

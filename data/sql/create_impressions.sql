@@ -1,5 +1,5 @@
 CREATE TABLE
-    adquality.impressions
+    ad_quality.impressions
     (
         transaction_nbr BIGINT,
         network_id INTEGER,
@@ -14,13 +14,13 @@ CREATE TABLE
         os CHARACTER VARYING(100),
         device CHARACTER VARYING(100),
         measured NUMERIC(12,5),
-        inview NUMERIC(12,5)
+        in_view NUMERIC(12,5)
     );
 
-ALTER TABLE adquality.impressions OWNER TO aberegov;
+ALTER TABLE ad_quality.impressions OWNER TO aberegov;
 
 CREATE VIEW
-    adquality.impressions_view AS
+    ad_quality.impressions_view AS
     (
     SELECT
         transaction_nbr,
@@ -36,8 +36,8 @@ CREATE VIEW
         os,
         device,
         (case when measured = 1 then 1 else 0 end) as measured,
-        (case when inview = 1 then 1 else 0 end) as inview
-    FROM adquality.impressions
+        (case when in_view = 1 then 1 else 0 end) as in_view
+    FROM ad_quality.impressions
     );
 
-ALTER TABLE adquality.impressions_view OWNER TO aberegov;
+ALTER TABLE ad_quality.impressions_view OWNER TO aberegov;
