@@ -2,7 +2,7 @@
 class SlidingBuffer:
     def __init__(self, limit):
         self.data = []
-        self.sunk = 0
+        self.archived = 0
         self.sliding_sum = 0
         self.limit = limit
 
@@ -12,7 +12,7 @@ class SlidingBuffer:
 
         if len(self.data) > self.limit:
             removed = self.data.pop(0)
-            self.sunk += removed
+            self.archived += removed
             self.sliding_sum -= removed
 
     @property
@@ -21,9 +21,13 @@ class SlidingBuffer:
 
     @property
     def total(self):
-        return self.sunk + self.sum
+        return self.archived + self.sum
+
+    def __iadd__(self, y):
+        self.add(y)
+        return  self
 
     def clear(self):
         self.data.clear()
-        self.sunk = 0
+        self.archived = 0
         self.sliding_sum = 0

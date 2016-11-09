@@ -14,7 +14,7 @@ class ViewabilitySimulator:
         self.source = source
         self.build_predictors()
         self.controller = ViewabilityController(predictor=self.predictor, goal=goal, n=n, w=w, l=l)
-        self.results = {'rate': [], 'threshold': []}
+        self.results = {'threshold': [], 'actual_rate': [], 'window_rate': []}
 
     def build_predictors(self):
         mk_file = os.path.normpath(os.path.join(os.path.expanduser("~"), 'multi-key.data'))
@@ -54,17 +54,22 @@ class ViewabilitySimulator:
 
     def output(self, data):
         logger.info(data)
-        self.results['threshold'].append(data[1])
-        self.results['rate'].append(data[3])
+        if data[0]:
+            self.results['threshold'].append(data[2])
+            self.results['window_rate'].append(data[-2])
+            self.results['actual_rate'].append(data[-1])
 
     def show_results(self):
         logger.info('Showing results')
-        x = list(range(len(self.results['rate'])))
-        pyplot.plot(x, self.results['rate'], color='green', linestyle='solid')
+        x = list(range(len(self.results['window_rate'])))
+        actual, = pyplot.plot(x, self.results['actual_rate'], color='green', linestyle='solid', label="actual rate")
+        window, = pyplot.plot(x, self.results['window_rate'], color='red', linestyle='--', label="window rate")
+        pyplot.grid(True)
+        pyplot.legend(handles=[actual, window])
         pyplot.show()
 
 
 if __name__ == '__main__':
-    simulator = ViewabilitySimulator(goal=0.6, n=100000, w=1000, l=1000)
+    simulator = ViewabilitySimulator(goal=0.7, n=100000, w=1000, l=1000)
     simulator.run()
     simulator.show_results()

@@ -13,14 +13,14 @@ class SlidingBufferTestCase(unittest.TestCase):
         self.buffer.add(10)
         self.assertEqual(10, self.buffer.sum)
         self.assertEqual(10, self.buffer.total)
-        self.assertEqual( 0, self.buffer.sunk)
+        self.assertEqual(0, self.buffer.archived)
 
     def test_add_two_items(self):
         self.buffer.add(10)
         self.buffer.add(30)
         self.assertEqual(40, self.buffer.sum)
         self.assertEqual(40, self.buffer.total)
-        self.assertEqual( 0, self.buffer.sunk)
+        self.assertEqual(0, self.buffer.archived)
 
     def test_add_three_items(self):
         self.buffer.add(10)
@@ -28,7 +28,7 @@ class SlidingBufferTestCase(unittest.TestCase):
         self.buffer.add(50)
         self.assertEqual(90, self.buffer.sum)
         self.assertEqual(90, self.buffer.total)
-        self.assertEqual( 0, self.buffer.sunk)
+        self.assertEqual(0, self.buffer.archived)
 
     def test_add_four_items(self):
         self.buffer.add(10)
@@ -37,7 +37,7 @@ class SlidingBufferTestCase(unittest.TestCase):
         self.buffer.add(70)
         self.assertEqual(150, self.buffer.sum)
         self.assertEqual(160, self.buffer.total)
-        self.assertEqual( 10, self.buffer.sunk)
+        self.assertEqual(10, self.buffer.archived)
 
     def test_add_many_items(self):
         s = 0
@@ -47,7 +47,7 @@ class SlidingBufferTestCase(unittest.TestCase):
 
         self.assertEqual(27, self.buffer.sum)
         self.assertEqual(s,  self.buffer.total)
-        self.assertEquals(s - 27, self.buffer.sunk)
+        self.assertEquals(s - 27, self.buffer.archived)
 
 
 
