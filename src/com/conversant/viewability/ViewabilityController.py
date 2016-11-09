@@ -46,25 +46,37 @@ class ViewabilityController:
         # make predictions
         predictors = self.predictor.predict_all(self.predictor_types, imp[1:-2])
 
+        # P(in_view) = P(in_view|measured) x P(measured)
+        prob_in_view = float(predictors[self.VIEW]) * float(predictors[self.MEASURE])
+
         # calculate the threshold
         if self.window_rate is not None:
+            # T[t] = T[t-1] + e x (target - current)
             self.threshold += self.e * (self.compensating_rate - self.window_rate)
 
         # make the decision
-        if predictors[self.VIEW] >= self.threshold:
+        if prob_in_view >= self.threshold:
             # record predictors and actual
             self.impressions += 1
-            for x in [self.VIEW, self.MEASURE]:
-                self.estimate[x].add(float(predictors[x]))
-                self.actual[x].add(imp[x - 2])
 
-            # output event information and decision
-            output([
-                imp[0],
+            # sum of in-view impressions
+            self.actual[self.VIEW].add(imp[-2])
+
+            # sum of measured impressions
+            self.actual[self.MEASURE].add(imp[-1])
+
+            # Estimate for the number of in-view impressions: N(in-view) = N x P(in-view|measured) x P(measured)
+            self.estimate[self.VIEW].add(prob_in_view)
+
+            # Estimate for the n umber of measured impressions: N(measured) = N x P(measured)
+            self.estimate[self.MEASURE].add(float(predictors[self.MEASURE]))
+
+            # output the event information and stats
+            output([imp[0],
                 self.threshold,
                 self.window_rate,
                 self.actual_rate,
-                predictors[self.VIEW],
+                prob_in_view,
                 predictors[self.MEASURE],
                 imp[-2],
                 imp[-1]

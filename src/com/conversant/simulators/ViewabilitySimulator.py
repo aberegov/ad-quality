@@ -34,7 +34,7 @@ class ViewabilitySimulator:
         logger.info('Start running simulation')
         data = SQLShell()
         data.execute("SELECT transaction_nbr, {0}, in_view, measured FROM {1}".format
-                     (str(self.predictor.multi_key), self.source), {}, self.handle_impression)
+                     (str(self.predictor.multi_key), self.source), {}, self.handle_impression, self.controller.n)
 
     def handle_impression(self, imp):
         self.controller.process_event(imp, self.output)
@@ -52,6 +52,6 @@ class ViewabilitySimulator:
 
 
 if __name__ == '__main__':
-    simulator = ViewabilitySimulator(goal=0.7, n=10000, w=100, l=100)
+    simulator = ViewabilitySimulator(goal=0.6, n=100000, w=1000, l=1000)
     simulator.run()
     simulator.show_results()
