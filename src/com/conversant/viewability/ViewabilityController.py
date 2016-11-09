@@ -5,7 +5,7 @@ class ViewabilityController:
     (VIEW, MEASURE) = range(2)
     predictor_types = ['viewability', 'measurability']
 
-    def __init__(self, goal, predictor, n=1000000, w=10000, l=10000, e=0.1):
+    def __init__(self, goal, predictor, n=1000000, w=10000, l=10000, e=0.01):
         self.goal = goal
         self.threshold = goal
         self.e = e
@@ -53,9 +53,10 @@ class ViewabilityController:
         if self.window_rate is not None:
             # T[t] = T[t-1] + e x (target - current)
             self.threshold += self.e * (self.compensating_rate - self.window_rate)
+            self.threshold = min(0.8, max(0.1, self.threshold))
 
         # make the decision
-        if prob_in_view >= self.threshold:
+        if predictors[self.VIEW] >= self.threshold:
             # record predictors and actual
             self.impressions += 1
 
@@ -81,3 +82,5 @@ class ViewabilityController:
                 imp[-2],
                 imp[-1]
             ])
+        else:
+            print("No bid predicted %f < threshold %f (goal=%f)" % (prob_in_view, self.threshold, self.compensating_rate))
