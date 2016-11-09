@@ -10,9 +10,19 @@ class MultiKeyPredictorTestCase(unittest.TestCase):
     def tearDown(self):
         self.predictor.clear()
 
-    def test_predict(self):
-        self.predictor['viewability'] = self.predictor.multi_key.keys
+    def test_path_best_match(self):
+        self.predictor['measurability'] = [
+            'ad_format_id',
+            'device',
+            'os',
+            'browser_name',
+            'browser_version',
+            'media_size',
+            'network_id',
+            'seller_id',
+            'site_id',
+            'ad_position'
+        ]
         self.predictor.build()
-        self.assertEqual(round(Decimal(0.81043), 5),
-                        round(self.predictor.predict('viewability',
-                          ['0','15900','537114956','537203316','18','-1','Other','Windows 10','Firefox','49']), 5))
+        self.predictor.path_best_match('measureability',
+            ['17', '5010', '(null)', '(null)', '29', '(null)', 'Other', 'Windows 10', 'Chrome', '54'])

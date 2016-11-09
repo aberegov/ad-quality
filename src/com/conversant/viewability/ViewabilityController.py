@@ -3,11 +3,11 @@ from com.conversant.common.SlidingBuffer import SlidingBuffer
 
 class ViewabilityController:
     (VIEW, MEASURE) = range(2)
-    predictor_types = ['viewability', 'measureability']
+    predictor_types = ['viewability', 'measurability']
 
     def __init__(self, goal, predictor, n=1000000, w=10000, l=10000, e=0.1):
-        self.threshold = goal
         self.goal = goal
+        self.threshold = goal
         self.e = e
         self.n = n
         self.predictor = predictor
@@ -17,26 +17,26 @@ class ViewabilityController:
 
     @property
     def elapsed(self):
-        return self.impressions / self.n
+        return float(self.impressions / self.n)
 
     @property
     def actual_rate(self):
-        return self.actual[self.VIEW].total \
-               / self.actual[self.MEASURE].total if self.actual[self.MEASURE].total > 0 else None
+        return float(self.actual[self.VIEW].total / self.actual[self.MEASURE].total) \
+            if self.actual[self.MEASURE].total > 0 else None
 
     @property
     def historical_rate(self):
-        return self.actual[self.VIEW].sunk \
-               / self.actual[self.MEASURE].sunk if self.actual[self.MEASURE].sunk > 0 else None
+        return float(self.actual[self.VIEW].sunk / self.actual[self.MEASURE].sunk) \
+            if self.actual[self.MEASURE].sunk > 0 else None
 
     @property
     def window_rate(self):
-        return self.estimate[self.VIEW].sum \
-               / self.estimate[self.MEASURE].sum if self.estimate[self.MEASURE].sum > 0 else None
+        return float(self.estimate[self.VIEW].sum / self.estimate[self.MEASURE].sum)\
+            if self.estimate[self.MEASURE].sum > 0 else None
 
     @property
     def target(self):
-        return (self.goal - self.elapsed * self.historical_rate) / (1 - self.elapsed) \
+        return float((self.goal - self.elapsed * self.historical_rate) / (1 - self.elapsed)) \
             if self.historical_rate is not None else self.goal
 
     def process_event(self, imp, output):
@@ -55,7 +55,7 @@ class ViewabilityController:
             # record event
             self.impressions += 1
             for x in [self.VIEW, self.MEASURE]:
-                self.estimate[x].add(predictors[x])
+                self.estimate[x].add(float(predictors[x]))
                 self.actual[x].add(imp[x - 2])
 
             # output event information and decision

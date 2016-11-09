@@ -25,8 +25,8 @@ class MultiKeyPredictor(DatabaseTree):
         def prepare_row(self, row):
             return [row[0]] + self.multi_key.reorder(row[0], row[1:-1]) + [row[-1]]
 
-        def predict(self, name, keys):
-            return self.path_best_match([name] + self.multi_key.reorder(name, keys))
+        def predict(self, name, data):
+            return self.path_best_match([name] + self.multi_key.reorder(name, data))
 
         def predict_all(self, predictors, keys):
-            return [self.predict(t, keys) for t in predictors]
+            return [float(self.predict(t, keys)) for t in predictors]

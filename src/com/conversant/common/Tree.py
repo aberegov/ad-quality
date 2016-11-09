@@ -86,6 +86,9 @@ class Tree(object):
 
     def path_best_match(self, tags):
         (scores, data) = self.path_traverse(tags, self.root)
+        if scores is None:
+            raise Exception("Can't find predictors for %s" % str(tags))
+
         a = [int(s, 2) for s in scores]
         return data[a.index(max(a))]
 
