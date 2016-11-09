@@ -35,7 +35,7 @@ class ViewabilityController:
             if self.estimate[self.MEASURE].sum > 0 else None
 
     @property
-    def target(self):
+    def compensating_rate(self):
         return float((self.goal - self.elapsed * self.historical_rate) / (1 - self.elapsed)) \
             if self.historical_rate is not None else self.goal
 
@@ -44,15 +44,15 @@ class ViewabilityController:
             return
 
         # make predictions
-        predictors = self.predictor.predict_all(self.predictor_types, imp[:-2])
+        predictors = self.predictor.predict_all(self.predictor_types, imp[1:-2])
 
-        # calculate threshold
+        # calculate the threshold
         if self.window_rate is not None:
-            self.threshold += self.e * (self.target - self.window_rate)
+            self.threshold += self.e * (self.compensating_rate - self.window_rate)
 
-        # make decision
+        # make the decision
         if predictors[self.VIEW] >= self.threshold:
-            # record event
+            # record predictors and actual
             self.impressions += 1
             for x in [self.VIEW, self.MEASURE]:
                 self.estimate[x].add(float(predictors[x]))
@@ -60,6 +60,7 @@ class ViewabilityController:
 
             # output event information and decision
             output([
+                imp[0],
                 self.threshold,
                 self.window_rate,
                 self.actual_rate,

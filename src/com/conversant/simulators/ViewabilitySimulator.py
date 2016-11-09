@@ -33,7 +33,7 @@ class ViewabilitySimulator:
     def run(self):
         logger.info('Start running simulation')
         data = SQLShell()
-        data.execute("SELECT {0}, in_view, measured FROM {1}".format
+        data.execute("SELECT transaction_nbr, {0}, in_view, measured FROM {1}".format
                      (str(self.predictor.multi_key), self.source), {}, self.handle_impression)
 
     def handle_impression(self, imp):
@@ -41,8 +41,8 @@ class ViewabilitySimulator:
 
     def output(self, data):
         logger.info(data)
-        self.results['threshold'].append(data[0])
-        self.results['rate'].append(data[2])
+        self.results['threshold'].append(data[1])
+        self.results['rate'].append(data[3])
 
     def show_results(self):
         logger.info('Displaying results')

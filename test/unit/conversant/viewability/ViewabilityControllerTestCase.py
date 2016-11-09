@@ -14,7 +14,7 @@ class ViewabilityControllerTestCase(unittest.TestCase):
     def tearDown(self):
         del self.controller
 
-    def predict_all(self, predictor_types, keys):
+    def predict_all(self, predictors, keys):
         return [0.4 + keys[0] * 0.1, 0.7 + keys[1] * 0.2]
 
     def test_process_event(self):
@@ -23,6 +23,7 @@ class ViewabilityControllerTestCase(unittest.TestCase):
             v = m * random.choice([0, 1])
 
             self.controller.process_event([
+                i,
                 random.choice([0, 1]),
                 random.choice([0, 1]),
                 v,
