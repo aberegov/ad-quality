@@ -30,11 +30,21 @@ vrd_prd => \q
 Python Environment
 ==================
 
+To configure the python environment two steps are required:
+    (1) Install required python packages
+    (2) Create an environment configuration file .env
+
 Additional Packages
 -------------------
 You need to install the following packages
-    (1) matplotlib
-    (2) unittest
+    (1) matplotlib  (graphing & charting)
+    (2) unittest    (unit testing)
+    (3) psycopg2    (Postgres support)
+
+You may get an error while installing any of the above packages before of an old version of pip.
+To upgrade pip use the following command:
+
+> python -m pip install --upgrade pip
 
 Connection to Database
 -----------------------
@@ -50,4 +60,3 @@ database=postgres
 Running Simulations
 ===================
 Run python script com.conversant.simulators.ViewabilitySimulator.py
-
