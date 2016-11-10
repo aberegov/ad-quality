@@ -16,12 +16,12 @@ class SlidingBuffer:
             self.sliding_sum -= removed
 
     @property
-    def sum(self):
+    def current(self):
         return self.sliding_sum
 
     @property
     def total(self):
-        return self.archived + self.sum
+        return self.archived + self.current
 
     def __iadd__(self, y):
         self.add(y)

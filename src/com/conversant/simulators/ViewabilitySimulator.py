@@ -3,6 +3,7 @@ import os
 import pickle
 from matplotlib import pyplot
 from com.conversant.viewability.MultiKeyPredictor import MultiKeyPredictor
+from com.conversant.viewability.PredictorEnum import PredictorEnum
 from com.conversant.viewability.ViewabilityController import ViewabilityController
 from com.conversant.common.SQLShell import SQLShell
 
@@ -10,21 +11,23 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class ViewabilitySimulator:
-    def __init__(self, goal, n=100000, w=10000, l=10000,source='ad_quality.impressions_view'):
+    def __init__(self, goal, period=100000, window=10000, latency=10000, source='ad_quality.impressions_view'):
+        self.predictor = None
         self.source = source
         self.build_predictors()
-        self.controller = ViewabilityController(predictor=self.predictor, goal=goal, n=n, w=w, l=l)
         self.results = {'threshold': [], 'actual_rate': [], 'window_rate': []}
+        self.controller = ViewabilityController(
+            predictor=self.predictor, goal=goal, period=period, window=window, latency=latency)
 
     def build_predictors(self):
         mk_file = os.path.normpath(os.path.join(os.path.expanduser("~"), 'multi-key.data'))
-        if (os.path.isfile(mk_file)):
+        if os.path.isfile(mk_file):
             logger.info('Loading multi-key lookup from %s' % mk_file)
             with open(mk_file, 'rb') as f:
                 self.predictor = pickle.load(f)
         else:
             self.predictor = MultiKeyPredictor()
-            self.predictor["measurability"] = [
+            self.predictor[PredictorEnum.measure.value] = [
                 'ad_format_id',
                 'device',
                 'os',
@@ -47,13 +50,13 @@ class ViewabilitySimulator:
         logger.info('Processing impressions')
         data = SQLShell()
         data.execute("SELECT transaction_nbr, {0}, in_view, measured FROM {1}".format
-                     (str(self.predictor.multi_key), self.source), {}, self.handle_impression, self.controller.n)
+                     (str(self.predictor.multi_key), self.source), {}, self.handle_impression, self.controller.period)
 
     def handle_impression(self, imp):
         self.controller.process_event(imp, self.output)
 
     def output(self, data):
-        logger.info(data)
+        logger.debug(data)
         if data[0]:
             self.results['threshold'].append(data[2])
             self.results['window_rate'].append(data[-2])
@@ -70,6 +73,6 @@ class ViewabilitySimulator:
 
 
 if __name__ == '__main__':
-    simulator = ViewabilitySimulator(goal=0.7, n=100000, w=1000, l=1000)
+    simulator = ViewabilitySimulator(goal=0.7, period=100000, window=1000, latency=1000)
     simulator.run()
     simulator.show_results()

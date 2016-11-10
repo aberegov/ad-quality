@@ -1,6 +1,7 @@
 import unittest
 from com.conversant.common.SlidingBuffer import SlidingBuffer
 
+
 class SlidingBufferTestCase(unittest.TestCase):
     def setUp(self):
         self.buffer = SlidingBuffer(3)
@@ -11,14 +12,14 @@ class SlidingBufferTestCase(unittest.TestCase):
 
     def test_add_item(self):
         self.buffer.add(10)
-        self.assertEqual(10, self.buffer.sum)
+        self.assertEqual(10, self.buffer.current)
         self.assertEqual(10, self.buffer.total)
         self.assertEqual(0, self.buffer.archived)
 
     def test_add_two_items(self):
         self.buffer.add(10)
         self.buffer.add(30)
-        self.assertEqual(40, self.buffer.sum)
+        self.assertEqual(40, self.buffer.current)
         self.assertEqual(40, self.buffer.total)
         self.assertEqual(0, self.buffer.archived)
 
@@ -26,7 +27,7 @@ class SlidingBufferTestCase(unittest.TestCase):
         self.buffer.add(10)
         self.buffer.add(30)
         self.buffer.add(50)
-        self.assertEqual(90, self.buffer.sum)
+        self.assertEqual(90, self.buffer.current)
         self.assertEqual(90, self.buffer.total)
         self.assertEqual(0, self.buffer.archived)
 
@@ -35,9 +36,17 @@ class SlidingBufferTestCase(unittest.TestCase):
         self.buffer.add(30)
         self.buffer.add(50)
         self.buffer.add(70)
-        self.assertEqual(150, self.buffer.sum)
+        self.assertEqual(150, self.buffer.current)
         self.assertEqual(160, self.buffer.total)
         self.assertEqual(10, self.buffer.archived)
+
+    def test_zero_current(self):
+        self.buffer.limit = 0
+        self.buffer += 20
+        self.buffer += 30
+        self.assertEquals(50, self.buffer.total)
+        self.assertEquals(0, self.buffer.current)
+        self.assertEquals(50, self.buffer.archived)
 
     def test_add_many_items(self):
         s = 0
@@ -45,7 +54,7 @@ class SlidingBufferTestCase(unittest.TestCase):
             self.buffer.add(i)
             s += i
 
-        self.assertEqual(27, self.buffer.sum)
+        self.assertEqual(27, self.buffer.current)
         self.assertEqual(s,  self.buffer.total)
         self.assertEquals(s - 27, self.buffer.archived)
 

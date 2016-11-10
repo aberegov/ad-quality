@@ -1,27 +1,28 @@
 from com.conversant.common.SlidingBuffer import SlidingBuffer
+from com.conversant.viewability.PredictorEnum import PredictorEnum
 
 
 class ViewabilityController:
-    def __init__(self, goal, predictor, n=1000000, w=10000, l=10000, e=0.01):
+    def __init__(self, goal, predictor, period=1000000, window=10000, latency=10000, sensitivity=0.01):
         self.goal = goal
         self.threshold = goal
-        self.e = e
-        self.n = n
+        self.sensitivity = sensitivity
+        self.period = period
         self.predictor = predictor
-        self.actual_in_view = SlidingBuffer(l)
-        self.actual_measure = SlidingBuffer(l)
-        self.estimate_in_view = SlidingBuffer(w)
-        self.estimate_measure = SlidingBuffer(w)
+        self.actual_in_view = SlidingBuffer(latency)
+        self.actual_measure = SlidingBuffer(latency)
+        self.estimate_in_view = SlidingBuffer(window)
+        self.estimate_measure = SlidingBuffer(window)
         self.impressions = 0
 
     @property
     def elapsed(self):
-        return float(self.impressions / self.n)
+        return float(self.impressions / self.period)
 
     @property
     def actual_window(self):
-        return float(self.actual_in_view.sum / self.actual_measure.sum) \
-            if self.actual_measure.sum > 0 else None
+        return float(self.actual_in_view.current / self.actual_measure.current) \
+            if self.actual_measure.current > 0 else None
 
     @property
     def actual_rate(self):
@@ -35,8 +36,8 @@ class ViewabilityController:
 
     @property
     def window_rate(self):
-        return float(self.estimate_in_view.sum / self.estimate_measure.sum)\
-            if self.estimate_measure.sum > 0 else None
+        return float(self.estimate_in_view.current / self.estimate_measure.current)\
+            if self.estimate_measure.current > 0 else None
 
     @property
     def compensating_rate(self):
@@ -44,7 +45,7 @@ class ViewabilityController:
             if self.historical_rate is not None else self.goal
 
     def process_event(self, imp, output):
-        if self.impressions > self.n:
+        if self.impressions > self.period:
             return
 
         # extract from impression data, which has the following layout
@@ -58,18 +59,19 @@ class ViewabilityController:
         imp_measure = imp[-1]
 
         # make predictions
-        prob_in_view = float(self.predictor.predict(  'viewability', imp_mk_data))
-        prob_measure = float(self.predictor.predict('measurability', imp_mk_data))
+        prob_in_view = float(self.predictor.predict(PredictorEnum.in_view.value, imp_mk_data))
+        prob_measure = float(self.predictor.predict(PredictorEnum.measure.value, imp_mk_data))
 
         # calculate the threshold
         if self.window_rate is not None:
-            # T[t] = T[t-1] + e x (target - current)
-            self.threshold += self.e * (self.compensating_rate - self.window_rate)
+            # T[t] = T[t-1] + sensitivity x (target - current)
+            self.threshold += self.sensitivity * (self.compensating_rate - self.window_rate)
             # apply limits [0.1, 0.8] to threshold
             self.threshold = min(0.8, max(0.1, self.threshold))
 
         # make the decision
-        if prob_in_view >= self.threshold:
+        make_bid = prob_in_view >= self.threshold
+        if make_bid:
             # update controller's state variables
             self.impressions += 1
 
@@ -87,7 +89,7 @@ class ViewabilityController:
 
         # output the event information and stats
         output([
-            prob_in_view >= self.threshold,
+            1 if make_bid else 0,
             imp_tid,
             self.threshold,
             prob_in_view,

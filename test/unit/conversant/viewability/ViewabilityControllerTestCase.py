@@ -9,13 +9,13 @@ logger = logging.getLogger(__name__)
 
 class ViewabilityControllerTestCase(unittest.TestCase):
     def setUp(self):
-        self.controller = ViewabilityController(goal=0.5, predictor=self, n=100, l=10, w=10)
+        self.controller = ViewabilityController(goal=0.5, predictor=self, period=100, latency=10, window=10)
 
     def tearDown(self):
         del self.controller
 
-    def predict_all(self, predictors, keys):
-        return [0.4 + keys[0] * 0.1, 0.7 + keys[1] * 0.2]
+    def predict(self, predictor, keys):
+        return 0.4 + keys[0] * 0.1 + keys[1] * 0.2
 
     def test_process_event(self):
         for i in range(100):
