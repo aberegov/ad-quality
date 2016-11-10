@@ -103,14 +103,14 @@ class Tree(object):
         if tag in downstream:
             s, d = self.path_traverse(tags, downstream[tag], index + 1, '1' + score)
             if s is not None:
-                scores.extend(s)
-                data.extend(d)
+                scores += s
+                data += d
 
         if default in downstream:
             s, d = self.path_traverse(tags, downstream[default], index + 1, '0' + score)
             if s is not None:
-                scores.extend(s)
-                data.extend(d)
+                scores += s
+                data += d
 
         return (scores, data) if len(scores) > 0 else (None, None)
 

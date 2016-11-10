@@ -53,7 +53,7 @@ class ViewabilitySimulator:
                      (str(self.predictor.multi_key), self.source), {}, self.handle_impression)
 
     def handle_impression(self, imp):
-        self.controller.process_event(imp, self.output)
+        return self.controller.process_event(imp, self.output)
 
     def output(self, data):
         logger.debug(data)

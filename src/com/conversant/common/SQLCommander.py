@@ -28,6 +28,8 @@ class SQLCommander:
                 row_num += 1
                 if max_rows != -1 and row_num > max_rows:
                     break
-                processor(rec)
+                ret = processor(rec)
+                if ret is not None and not ret:
+                    break
         finally:
             cursor.close()

@@ -46,7 +46,7 @@ class ViewabilityController:
 
     def process_event(self, imp, output):
         if self.impressions > self.period:
-            return
+            return False
 
         # extract from impression data, which has the following layout
         # 0     transaction ID
@@ -99,3 +99,5 @@ class ViewabilityController:
             self.window_rate,
             self.actual_rate,
         ])
+
+        return True
