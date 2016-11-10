@@ -50,7 +50,7 @@ class ViewabilitySimulator:
         logger.info('Processing impressions')
         data = SQLShell()
         data.execute("SELECT transaction_nbr, {0}, in_view, measured FROM {1}".format
-                     (str(self.predictor.multi_key), self.source), {}, self.handle_impression, self.controller.period)
+                     (str(self.predictor.multi_key), self.source), {}, self.handle_impression)
 
     def handle_impression(self, imp):
         self.controller.process_event(imp, self.output)
