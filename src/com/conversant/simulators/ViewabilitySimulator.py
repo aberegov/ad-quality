@@ -12,13 +12,13 @@ logger = logging.getLogger(__name__)
 
 
 class ViewabilitySimulator:
-    def __init__(self, goal, period=100000, window=10000, latency=10000, source='ad_quality.impressions_view'):
+    def __init__(self, goal, period=100000, window=10000, latency=10000, sensitivity=0.01, source='ad_quality.impressions_view'):
         self.predictor = None
         self.source = source
         self.build_predictors()
         self.results = {'threshold': [], 'actual_rate': [], 'window_rate': []}
         self.controller = ViewabilityController(
-            predictor=self.predictor, goal=goal, period=period, window=window, latency=latency)
+            predictor=self.predictor, goal=goal, period=period, window=window, latency=latency, sensitivity=sensitivity)
 
     def build_predictors(self):
         mk_file = os.path.normpath(os.path.join(os.path.expanduser("~"), 'multi-key.data'))
@@ -54,10 +54,16 @@ class ViewabilitySimulator:
     def show_results(self):
         logger.info('Showing results')
         x = list(range(len(self.results['window_rate'])))
-        actual, = pyplot.plot(x, self.results['actual_rate'], color='green', linestyle='solid', label="actual rate")
-        window, = pyplot.plot(x, self.results['window_rate'], color='red', linestyle='--', label="window rate")
+
+        f, (ax1, ax2) = pyplot.subplots(2, sharex=True, sharey=True)
+
+        threshold, = ax1.plot(x, self.results['threshold'], color='blue', linestyle='solid', label="threshold")
+        actual, = ax2.plot(x, self.results['actual_rate'], color='green', linestyle='solid', label="actual rate")
+        window, = ax2.plot(x, self.results['window_rate'], color='red', linestyle='solid', label="window rate")
+
         pyplot.grid(True)
-        pyplot.legend(handles=[actual, window])
+        pyplot.legend(bbox_to_anchor=(0., 1.02, 1., .102),
+                      loc=3, ncol=3, mode="expand", borderaxespad=0.,handles=[actual, window, threshold])
         pyplot.show()
 
 
