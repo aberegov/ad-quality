@@ -3,12 +3,13 @@ import os
 import pickle
 from matplotlib import pyplot
 from com.conversant.viewability.MultiKeyPredictor import MultiKeyPredictor
-from com.conversant.viewability.PredictorEnum import PredictorEnum
 from com.conversant.viewability.ViewabilityController import ViewabilityController
 from com.conversant.common.SQLShell import SQLShell
 
-logging.basicConfig(level=logging.INFO)
+FORMAT = '%(asctime)-15s %(message)s'
+logging.basicConfig(level=logging.INFO,format=FORMAT)
 logger = logging.getLogger(__name__)
+
 
 class ViewabilitySimulator:
     def __init__(self, goal, period=100000, window=10000, latency=10000, source='ad_quality.impressions_view'):
@@ -26,20 +27,8 @@ class ViewabilitySimulator:
             with open(mk_file, 'rb') as f:
                 self.predictor = pickle.load(f)
         else:
-            self.predictor = MultiKeyPredictor()
-            self.predictor[PredictorEnum.measure.value] = [
-                'ad_format_id',
-                'device',
-                'os',
-                'browser_name',
-                'browser_version',
-                'media_size',
-                'network_id',
-                'seller_id',
-                'site_id',
-                'ad_position'
-            ]
             logger.info('Building multi-key lookup')
+            self.predictor = MultiKeyPredictor()
             self.predictor.build()
 
             logger.info('Serializing multi-key lookup into %s' % mk_file)

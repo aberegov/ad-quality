@@ -3,19 +3,17 @@ Running simulation is easy but it takes some time to prepare the data.
 Data Preparation
 ================
 I would recommend using a local copy of Postgres database for the simulation data.
-GreenPlum is very unresponsive from time to time.
 
 1) Create a schema for the simulation data
-    - replace username aberegov with another name
     - run data/sql/create_adquality_schema.sql
 
 2) Extract predictors data from the analytics prod and import the predictors into the local database
     - run data/sql/extract_predictors.sql script to dump data to CSV file
-    - use pgAdmin or DbVisualizer to load CSV file into table (both tools provide such capability)
+    - use pgAdmin or DbVisualizer to load CSV file into "predictors" table (both tools provide such capability)
 
 3) Extract impressions and IAS data and import it into the local database
     - run data/sql/extract_impressions.sql to dump data to CSV file
-    - use pgAdmin or DbVisualizer to load CSV file into table (both tools provide such capability)
+    - use pgAdmin or DbVisualizer to load CSV file into "impressions" table (both tools provide such capability)
 
 Mini tutorial how to dump table's data from GreenPlum
 ------------------------------------------------------
@@ -39,22 +37,26 @@ Additional Packages
 You need to install the following packages
     (1) matplotlib  (graphing & charting)
     (2) unittest    (unit testing)
-    (3) psycopg2    (Postgres support)
+    (3) psycopg2    (postgres support)
 
 You may get an error while installing any of the above packages before of an old version of pip.
 To upgrade pip use the following command:
 
 > python -m pip install --upgrade pip
 
-Connection to Database
+Configuration
 -----------------------
-In your home directory create .env file and add the below lines:
+In your home directory create .env file and add the below lines or you use a template file conf/example.env:
 
 [database]
 login=<username>
 password=<password>
-host=localhost
-database=postgres
+host=<database>
+database=<password>
+
+[hierarchy]
+viewability=ad_format_id,network_id,seller_id,site_id,media_size,ad_position,device,os,browser_name,browser_version
+measurability=ad_format_id,device,os,browser_name,browser_version,media_size,network_id,seller_id,site_id,ad_position
 
 
 Running Simulations

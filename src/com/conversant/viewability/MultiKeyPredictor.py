@@ -1,23 +1,16 @@
 from com.conversant.common.DatabaseTree import DatabaseTree
+from com.conversant.common.EnvConfig import EnvConfig
 from com.conversant.viewability.MultiKey import MultiKey
+from com.conversant.viewability.PredictorEnum import PredictorEnum
 
 
 class MultiKeyPredictor(DatabaseTree):
-        multi_key = MultiKey([
-            'ad_format_id',
-            'network_id',
-            'seller_id',
-            'site_id',
-            'media_size',
-            'ad_position',
-            'device',
-            'os',
-            'browser_name',
-            'browser_version'
-        ])
-
         def __init__(self, source='ad_quality.predictors'):
+            config = EnvConfig()
+            self.multi_key = MultiKey(config.get('hierarchy', PredictorEnum.in_view.value).split(','))
+            self.multi_key[PredictorEnum.measure.value] = config.get('hierarchy', PredictorEnum.measure.value).split(',')
             super().__init__("SELECT predictor_type, {0}, predictor_value FROM {1}".format(str(self.multi_key), source))
+
 
         def __setitem__(self, name, keys):
             self.multi_key[name] = keys
