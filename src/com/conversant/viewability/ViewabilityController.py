@@ -42,7 +42,7 @@ class ViewabilityController:
     @property
     def compensating_rate(self):
         return float((self.goal - self.elapsed * self.historical_rate) / (1 - self.elapsed)) \
-            if self.historical_rate is not None else self.goal
+            if self.historical_rate is not None and self.elapsed < 1 else self.goal
 
     def process_event(self, imp, output):
         if self.impressions > self.period:

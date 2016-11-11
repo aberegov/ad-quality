@@ -15,9 +15,10 @@ select
         ,(case when in_viewability_sample_attr = 'yes' then 1 else 0 end) as measured
         ,(case when request_type_id in (2, 4) then video_ad_in_view_meas else in_view_1s_meas end) as inview
 from fact_dmm_log i
-        inner join raw_trafficscope_log v on i.transaction_nbr = v.transaction_nbr and v.view_date > current_date - 2
-where dmm_date > current_date - 2
-        and length(ext_channel_id) <= 4
-        and ext_channel_id ~ E'^\\d+$'
-                and ext_channel_id::bigint & 15 = 1
+        inner join raw_trafficscope_log v
+            on i.transaction_nbr = v.transaction_nbr and dmm_date between '2016-10-27' and '2016-10-30'
+where dmm_date between '2016-10-27' and '2016-10-30'
+        and ext_channel_id ~ E'^\\d{3}$'
+                and ext_channel_id::integer & 15 = 1
+                    and i.transaction_nbr > 1000
 limit 1000000
