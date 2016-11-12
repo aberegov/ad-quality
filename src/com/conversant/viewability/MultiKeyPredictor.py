@@ -11,7 +11,6 @@ class MultiKeyPredictor(DatabaseTree):
             self.multi_key[PredictorEnum.measure.value] = config.get('hierarchy', PredictorEnum.measure.value).split(',')
             super().__init__("SELECT predictor_type, {0}, predictor_value FROM {1}".format(str(self.multi_key), source))
 
-
         def __setitem__(self, name, keys):
             self.multi_key[name] = keys
 
@@ -19,7 +18,7 @@ class MultiKeyPredictor(DatabaseTree):
             return [row[0]] + self.multi_key.reorder(row[0], row[1:-1]) + [row[-1]]
 
         def predict(self, name, data):
-            return self.path_best_match([name] + self.multi_key.reorder(name, data))
+            return self.match_path([name] + self.multi_key.reorder(name, data))
 
         def predict_all(self, predictors, keys):
             return [float(self.predict(t, keys)) for t in predictors]

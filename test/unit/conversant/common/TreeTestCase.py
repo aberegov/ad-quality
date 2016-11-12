@@ -22,7 +22,7 @@ class TreeTestCase(unittest.TestCase):
     def test_add_node(self):
         node = Node('node')
         self.tree.add_node(node)
-        self.assertEqual('node', self.tree.nodes[node.identifier].tag)
+        self.assertEqual('node', self.tree.nodes[node.identifier].name)
         self.assertEqual(node.identifier, self.tree.root)
 
     @unittest.expectedFailure
@@ -58,4 +58,4 @@ class TreeTestCase(unittest.TestCase):
         self.init_tree()
         self.tree.build_path(['011', '-1', 'abc'], 15)
         self.tree.build_path(['011', '22', 'xyz'], 45)
-        self.assertEquals(15, self.tree.path_best_match(['011', '22', 'abc']))
+        self.assertEquals(15, self.tree.match_path(['011', '22', 'abc']))

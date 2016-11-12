@@ -6,12 +6,12 @@ class NodeTestCase(unittest.TestCase):
     def test_defined_id(self):
         node = Node("node", 1)
         self.assertEqual(1, node.identifier)
-        self.assertEqual("node", node.tag)
+        self.assertEqual("node", node.name)
 
     def test_generated_id(self):
         node = Node("node")
         self.assertIsNotNone(node.identifier)
-        self.assertEqual("node", node.tag)
+        self.assertEqual("node", node.name)
 
     def test_set_id(self):
         node = Node("node")
@@ -23,14 +23,9 @@ class NodeTestCase(unittest.TestCase):
         self.assertIsNone(node.parent)
 
     def test_add_child(self):
-        node = Node("1")
-        node.add_child('11')
-        self.assertEqual('11', node.children[0])
-
-    def test_add_children(self):
         node = Node('1')
-        node.add_child('11')
-        node.add_child('12')
+        node.add_child(Node('11', '011'))
+        node.add_child(Node('12', '012'))
         self.assertEqual(2, len(node.children))
-        self.assertEqual('11', node.children[0])
-        self.assertEqual('12', node.children[1])
+        self.assertEqual('011', node.children['11'])
+        self.assertEqual('012', node.children['12'])
