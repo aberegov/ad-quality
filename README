@@ -1,4 +1,4 @@
-Running simulation is easy but it takes some time to prepare the data.
+Running simulations is easy but it takes some time to prepare the data.
 
 Data Preparation
 ================
@@ -19,9 +19,9 @@ Mini tutorial how to dump table's data from GreenPlum
 ------------------------------------------------------
 psql -h <GreenPlum host> -d vds_prd -U <your username>
 
-vrd_prd => \f ","
+vrd_prd => \f ','
 vrd_prd => \a
-vrd_prd => \o <path to the file name>
+vrd_prd => \o <path to the output csv file name>
 vrd_prd => <ENTER SQL>
 vrd_prd => \q
 
@@ -30,23 +30,23 @@ Python Environment
 
 To configure the python environment two steps are required:
     (1) Install required python packages
-    (2) Create an environment configuration file .env
+    (2) Create an environment configuration file .env in an user's home directory
 
 Additional Packages
 -------------------
-You need to install the following packages
+Install the following packages
     (1) matplotlib  (graphing & charting)
     (2) unittest    (unit testing)
     (3) psycopg2    (postgres support)
 
-You may get an error while installing any of the above packages before of an old version of pip.
+You may get an error while installing any of the above packages because of an old version of pip.
 To upgrade pip use the following command:
 
 > python -m pip install --upgrade pip
 
 Configuration
 -----------------------
-In your home directory create .env file and add the below lines or you use a template file conf/example.env:
+In your home directory create .env file and add the below lines or use a template file conf/example.env:
 
 [database]
 login=<username>
@@ -62,3 +62,20 @@ measurability=ad_format_id,device,os,browser_name,browser_version,media_size,net
 Running Simulations
 ===================
 Run python script com.conversant.simulators.ViewabilitySimulator.py
+
+
+Key Classes
+===========
+It is expected that you will need to modify some classes to extend simulations to fit specific needs.
+The below is a list of key classes with short descriptions. This should be helpful for making modifications:
+    * com.conversant.simulators.ViewabilitySimulator    - simulates targeting to viewability
+    * com.conversant.viewability.ViewabilityController  - a simple PID (only P) controller to hit viewability goals
+    * com.conversant.viewability.MultiKeyPredictor      - multi-key viewability predictors
+    * com.conversant.viewability.MultiKey               - multi-key
+    * com.conversant.common.KeyHierarchy                - manages ordered keys and their permutations
+    * com.conversant.common.Tree                        - a tree structure with support of wildcard matching
+    * com.conversant.common.DatabaseTree                - a tree structure built from table's data
+    * com.conversant.common.SQLShell                    - provides access to database
+
+
+
