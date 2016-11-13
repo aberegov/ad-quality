@@ -9,7 +9,7 @@ class NodeDuplicate(Exception):
     pass
 
 
-class RootNodeAlreadyExists(Exception):
+class RootExists(Exception):
     pass
 
 
@@ -22,22 +22,19 @@ class Tree(object):
         return self.nodes[nid] if nid in self.nodes else None
 
     def add_node(self, node, parent_nid=None):
-        if not isinstance(node, Node):
-            raise Exception("The node parameter must be of Node type")
-
         if node.identifier in self.nodes:
             raise NodeDuplicate("Duplicate node %s" % str(node))
 
-        if parent_nid is None:
-            if self.root_nid is not None:
-                raise RootNodeAlreadyExists("The tree already has a root (id=%s)" % self.root_nid)
-            else:
-                self.root_nid = node.identifier
-        elif parent_nid not in self.nodes:
-            raise NodeNotFound("The parent node ID %s is not in tree" % parent_nid)
+        if parent_nid is None and self.root_nid is not None:
+            raise RootExists("The tree already has a root %s" % self.root_nid)
+
+        if parent_nid is not None and parent_nid not in self.nodes:
+            raise NodeNotFound("The parent node %s is not in tree" % parent_nid)
 
         if parent_nid is not None:
             self.nodes[parent_nid].add_child(node)
+        else:
+            self.root_nid = node.identifier
 
         self.nodes.update({node.identifier: node})
 
