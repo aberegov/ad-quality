@@ -1,14 +1,12 @@
-
 import os
 import csv
 from time import sleep
-
-
 from com.conversant.common.URLEndpoint import URLEndpoint
 from com.conversant.viewability.BidExpertSegments import BidExpertSegments
+from com.conversant.common.EnvConfig import EnvConfig
+
 
 class BidExpert:
-
     def __init__(self, endpoint):
         self.endpoint = endpoint
 
@@ -37,23 +35,20 @@ class BidExpertHandler:
 
 
 def main():
-    src = os.path.join(os.path.expanduser("~"), 'data', 'video_sites.csv')
-    dst = os.path.join(os.path.expanduser("~"), 'data', 'video_sites_results.csv')
+    config = EnvConfig()
 
-    expert = BidExpert(URLEndpoint('http://api.adsafeprotected.com/db2/client/53362/segt?adsafe_url={0}'))
-    handler = BidExpertHandler(dst)
+    expert = BidExpert(URLEndpoint(config.segments_api))
+    handler = BidExpertHandler(os.path.join(os.path.expanduser("~"), 'data', config.segments_results))
 
     try:
-        with open(src, newline='', encoding='utf-8') as f:
+        with open(os.path.join(os.path.expanduser("~"), 'data', config.segments_urls),
+                  newline='', encoding='utf-8') as f:
             reader = csv.reader(f)
             expert.run(reader, handler.handle)
     except (KeyboardInterrupt, SystemExit):
         raise
-    except:
-         handler.close()
     else:
-         handler.close()
-
+        handler.close()
 
 if __name__ == '__main__':
     main()
