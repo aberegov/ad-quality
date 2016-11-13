@@ -2,12 +2,12 @@ import uuid
 
 
 class Node(object):
-    def __init__(self, name=None, nid=None, data=None):
+    def __init__(self, name=None, nid=None, value=None):
         self.identifier = nid if nid is not None else str(uuid.uuid1())
         self.name = name if name is not None else self.identifier
+        self.value = value
         self.parent = None
         self.children = {}
-        self.data = data
 
     def set_parent(self, nid):
         self.parent = nid
@@ -19,8 +19,8 @@ class Node(object):
     def __repr__(self):
         name = self.__class__.__name__
         args = [
-            "tag=%r" % self.tag,
-            "identifier=%r" % self.identifier,
-            "data=%r" % self.data
+            "id=%r" % self.identifier,
+            "name=%r" % self.name,
+            "value=%r" % self.value
         ]
         return "%s(%s)" % (name, ", ".join(args))

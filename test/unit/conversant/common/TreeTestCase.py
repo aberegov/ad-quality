@@ -23,7 +23,7 @@ class TreeTestCase(unittest.TestCase):
         node = Node('node')
         self.tree.add_node(node)
         self.assertEqual('node', self.tree.nodes[node.identifier].name)
-        self.assertEqual(node.identifier, self.tree.root)
+        self.assertEqual(node.identifier, self.tree.root_nid)
 
     @unittest.expectedFailure
     def test_second_root(self):
@@ -31,7 +31,7 @@ class TreeTestCase(unittest.TestCase):
         self.tree.add_node(Node('root'))
 
     @unittest.expectedFailure
-    def test_double_add(self):
+    def test_add_duplicate(self):
         node = Node('node')
         self.tree.add_node(node)
         self.tree.add_node(node)
@@ -43,19 +43,16 @@ class TreeTestCase(unittest.TestCase):
         self.assertEquals(2, len(self.tree['011'].children))
         self.assertEquals(0, len(self.tree['012'].children))
 
-    def test_node_by_path(self):
-        self.init_tree()
-        node = self.tree.node_by_path(['011', '111'])
-        self.assertEquals('111', node.identifier)
-
     def test_build_path(self):
         self.init_tree()
         self.tree.build_path(['011', '111', '1111', '11111'], '12345')
-        node = self.tree.node_by_path(['011', '111', '1111', '11111'])
-        self.assertEquals('12345', node.data)
+        node = self.tree.match_path(['011', '111', '1111', '11111'])
+        self.assertEquals('12345', node.value)
+        self.assertEquals('11111', node.name)
 
-    def test_path_best_match(self):
+
+    def test_match_path(self):
         self.init_tree()
         self.tree.build_path(['011', '-1', 'abc'], 15)
         self.tree.build_path(['011', '22', 'xyz'], 45)
-        self.assertEquals(15, self.tree.match_path(['011', '22', 'abc']))
+        self.assertEquals(15, self.tree.match_path(['011', '22', 'abc']).value)

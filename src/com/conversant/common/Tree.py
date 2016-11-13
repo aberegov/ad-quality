@@ -15,39 +15,35 @@ class RootNodeAlreadyExists(Exception):
 
 class Tree(object):
     def __init__(self):
-        self.nodes_map = {}
-        self.root = None
-
-    @property
-    def nodes(self):
-        return self.nodes_map
+        self.root_nid = None
+        self.nodes = {}
 
     def get_node(self, nid):
-        return self.nodes_map[nid] if nid in self.nodes_map else None
+        return self.nodes[nid] if nid in self.nodes else None
 
-    def add_node(self, node, parent=None):
+    def add_node(self, node, parent_nid=None):
         if not isinstance(node, Node):
-            raise OSError("The node parameter must be of Node type")
+            raise Exception("The node parameter must be of Node type")
 
-        if node.identifier in self.nodes_map:
-            raise NodeDuplicate("The node (id=%s name=%s) is already in the tree" % (node.identifier, node.name))
+        if node.identifier in self.nodes:
+            raise NodeDuplicate("Duplicate node %s" % str(node))
 
-        if parent is None:
-            if self.root is not None:
-                raise RootNodeAlreadyExists("The tree already has a root (id=%s)" % self.root)
+        if parent_nid is None:
+            if self.root_nid is not None:
+                raise RootNodeAlreadyExists("The tree already has a root (id=%s)" % self.root_nid)
             else:
-                self.root = node.identifier
-        elif parent not in self.nodes_map:
-            raise NodeNotFound("The parent with ID %s is not in tree" % parent)
+                self.root_nid = node.identifier
+        elif parent_nid not in self.nodes:
+            raise NodeNotFound("The parent node ID %s is not in tree" % parent_nid)
 
-        self.nodes_map.update({node.identifier: node})
+        if parent_nid is not None:
+            self.nodes[parent_nid].add_child(node)
 
-        if parent is not None:
-            self.nodes_map[parent].add_child(node)
+        self.nodes.update({node.identifier: node})
 
-    def build_path(self, node_names, data):
+    def build_path(self, node_names, value):
         node = None
-        nid = self.root
+        nid = self.root_nid
         for name in node_names:
             if name not in self[nid].children:
                 node = Node(name)
@@ -59,52 +55,37 @@ class Tree(object):
         if node is None:
             raise Exception("Can't build a tree path for %s" % str(node_names))
 
-        node.data = data
+        node.value = value
         return node
 
     def match_path(self, match_names, nid=None, index=0, wildcard='-1'):
         if nid is None:
-            nid = self.root
+            nid = self.root_nid
 
         if index >= len(match_names):
-            return self[nid].data
+            return self[nid]
 
         name = match_names[index]
         branches = self[nid].children
 
         for o in [name, wildcard]:
             if o in branches:
-                data = self.match_path(match_names, branches[o], index + 1)
-                if data is not None:
-                    return data
+                node = self.match_path(match_names, branches[o], index + 1)
+                if node is not None:
+                    return node
         return None
 
-    def node_by_path(self, path_names, wildcard='-1'):
-        nid = self.root
-        for names in path_names:
-            branches = self[nid].children
-            if names in branches:
-                nid = branches[names]
-            elif wildcard in branches:
-                nid = branches[wildcard]
-            else:
-                raise KeyError('Cannot find a match for %s from %s' % (names, str(path_names)))
-        return self[nid]
-
     def __contains__(self, key):
-        return [nid for nid in self.nodes_map if nid == key]
+        return [nid for nid in self.nodes if nid == key]
 
     def __getitem__(self, key):
         try:
-            return self.nodes_map[key]
+            return self.nodes[key]
         except KeyError:
-            raise NodeNotFound("Node % s is not found in the tree" % key)
+            raise NodeNotFound("Node %s can't found in the tree" % key)
 
     def __len__(self):
-        return len(self.nodes_map)
-
-    def __setitem__(self, key, value):
-        self.nodes_map.update({key: value})
+        return len(self.nodes)
 
     def clear(self):
-        self.nodes_map.clear()
+        self.nodes.clear()
