@@ -21,7 +21,7 @@ class ViewabilitySimulator:
             predictor=self.predictor, goal=goal, period=period, window=window, latency=latency, sensitivity=sensitivity)
 
     def build_predictors(self):
-        mk_file = os.path.normpath(os.path.join(os.path.expanduser("~"), 'multi-key.data'))
+        mk_file = os.path.normpath(os.path.join(os.path.expanduser("~"), 'multi-key_v1.data'))
         if os.path.isfile(mk_file):
             logger.info('Loading multi-key lookup from %s' % mk_file)
             with open(mk_file, 'rb') as f:
