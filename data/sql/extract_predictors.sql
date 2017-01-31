@@ -1,3 +1,5 @@
+psql -h dtord01pgm05p.dc.dotomi.net -d prod_dm -U aberegov
+
 SELECT
     vendor_id
         ,network_id                     as network_id

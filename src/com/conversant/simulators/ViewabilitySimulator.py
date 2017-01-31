@@ -68,6 +68,6 @@ class ViewabilitySimulator:
 
 
 if __name__ == '__main__':
-    simulator = ViewabilitySimulator(goal=0.7, period=100000, window=1000, latency=1000)
+    simulator = ViewabilitySimulator(goal=0.8, period=100000, window=1000, latency=1000,sensitivity=0.001)
     simulator.run()
     simulator.show_results()
