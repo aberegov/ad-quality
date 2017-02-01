@@ -14,6 +14,9 @@ class SQLShell:
             config.database_database)
         config.clear()
 
+    def iterate(self, sql, params,max_rows=-1):
+        return self.command.iterate(sql, params, max_rows)
+
     def execute(self, sql, params, processor,max_rows=-1):
         self.command.execute(sql, params, processor, max_rows)
 
