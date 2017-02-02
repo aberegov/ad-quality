@@ -6,7 +6,7 @@ setup(
     packages=['com', 'com.conversant', 'com.conversant.common', 'com.conversant.simulators',
               'com.conversant.viewability', 'unit', 'unit.conversant', 'unit.conversant.common',
               'unit.conversant.viewability'],
-    package_dir={'': 'src'},
+    package_dir={'com': 'src/com', 'unit': 'test/unit'},
     url='',
     license='',
     author='beregov',
