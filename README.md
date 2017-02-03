@@ -17,6 +17,7 @@ I would recommend using a local copy of Postgres database for the simulation dat
 
 Mini tutorial how to dump table's data from GreenPlum
 ------------------------------------------------------
+```shell
 psql -h <GreenPlum host> -d vds_prd -U <your username>
 
 vrd_prd => \f ','
@@ -24,6 +25,7 @@ vrd_prd => \a
 vrd_prd => \o <path to the output csv file name>
 vrd_prd => <ENTER SQL>
 vrd_prd => \q
+```
 
 Python Environment
 ==================
@@ -47,7 +49,7 @@ To upgrade pip use the following command:
 Configuration
 -----------------------
 In your home directory create .env file and add the below lines or use a template file conf/example.env:
-
+```shell
 [database]
 login=<username>
 password=<password>
@@ -57,7 +59,7 @@ database=<password>
 [hierarchy]
 viewability=ad_format_id,network_id,seller_id,site_id,media_size,ad_position,device,os,browser_name,browser_version
 measurability=ad_format_id,device,os,browser_name,browser_version,media_size,network_id,seller_id,site_id,ad_position
-
+```
 
 Running Simulations
 ===================
