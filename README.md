@@ -1,4 +1,4 @@
-Ad Quality Simualtions
+Ad Quality Simulations
 ======================
 [![Build Status](https://api.travis-ci.org/aberegov/ad-quality.png?branch=master)](https://api.travis-ci.org/aberegov/ad-quality)
 
