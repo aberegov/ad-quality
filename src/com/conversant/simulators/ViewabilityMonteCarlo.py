@@ -1,56 +1,49 @@
-import logging
-import os
-import pickle
-import csv
-from com.conversant.viewability.MultiKeyPredictor import MultiKeyPredictor
-from com.conversant.viewability.PredictorEnum import PredictorEnum
-
-FORMAT = '%(asctime)-15s %(message)s'
-logging.basicConfig(level=logging.INFO, format=FORMAT)
-logger = logging.getLogger(__name__)
+from random import randint
+from collections import OrderedDict
+from com.conversant.simulators.AbstractViewabilitySimulator import AbstractViewabilitySimulator
 
 
-class ViewabilityMonteCarlo:
-    def __init__(self, source='ad_quality.bid_view'):
-        self.source = source
-        self.results = []
-        self.build_predictors()
+class ViewabilityMonteCarlo(AbstractViewabilitySimulator):
+    def __init__(self, source='ad_quality.bids_view'):
+        super().__init__(source)
+        self.track = set()
 
-    def build_predictors(self):
-        mk_file = os.path.normpath(os.path.join(os.path.expanduser("~"), 'multi-key_v1.data'))
-        if os.path.isfile(mk_file):
-            logger.info('Loading multi-key lookup from %s' % mk_file)
-            with open(mk_file, 'rb') as f:
-                self.predictor = pickle.load(f)
-        else:
-            logger.info('Building multi-key lookup')
-            self.predictor = MultiKeyPredictor()
-            self.predictor.build()
+    def generate(self):
+        # ad_format_id,network_id,seller_id,site_id,media_size,ad_position,device,os,browser_name,browser_version
+        inputs = {
+            '0ad_format_id'      : ['18', '52', '20', '17', '0'],
+            '1network_id'        : ['12783', '15900', '1982', '12783', '12783', '243', '14200', '14100', '14000', '14000', '12783'],
+            '2seller_id'         : ['9336', '69173', '311', '10738', '209874', '38488', '560747', '3932', '208724'],
+            '3site_id'           : ['16312', '76446', '1216817', '45026', '2038105', '85743'],
+            '4media_size'        : ['11', '18', '21'],
+            '5ad_position'       : ['0', '1'],
+            '6device'            : ['Table', 'iPhone', 'Other'],
+            '7os'                : ['Android 5.x', 'Windows 10', 'Windows 7', 'iOS 8.2', 'Mac OS X', 'Windows 8.1'],
+            '8browser_name'      : ['Chrome', 'Chrome Mobile', 'Firefox', 'Apple WebKit', 'Safari', 'Internet Explorer'],
+            '9browser_version'   : ['51', '45', '49', '6', '13', '54', '11', '43']
+        }
 
-            logger.info('Serializing multi-key lookup into %s' % mk_file)
-            with open(mk_file, 'wb') as f:
-                pickle.dump(self.predictor, f)
+        inputs = OrderedDict(sorted(inputs.items(), key=lambda t: t[0]))
 
-    def run(self):
-        pass
+        for s in range(1000):
+            row = [0]
+            for name in inputs:
+                ln = len(inputs[name])
+                i = randint(0, ln - 1)
+                row.append(inputs[name][i])
+            row.append(0)
+            row.append(0)
+            self.handle_row(row)
 
-    def handle_bid(self, bid):
-        usd = float(bid[-2])
-        key = bid[1:-2]
-        predictor = float(self.predictor.predict(PredictorEnum.in_view.value, key))
-
-        self.results.append([usd, -1 if usd == 4.83 else usd / 7.0, predictor] + list(key))
-
-    def output(self):
-        path = os.path.normpath(os.path.join(os.path.expanduser("~"), 'mk_validation.csv'))
-        with open(path, "w") as out_file:
-            writer = csv.writer(out_file,  delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
-            writer.writerow(['ecpm_usd', 'ecpm_view', 'predictor'] + self.predictor.multi_key.keys)
-            for row in self.results:
-                writer.writerow(row)
+    def process_row(self, row, view):
+        if view != -1:
+            if view not in self.track:
+                self.append(row[1:-2] + [view])
+                self.track.add(view)
 
 
 if __name__ == '__main__':
     validator = ViewabilityMonteCarlo()
-    validator.run()
+    validator.generate()
     validator.output()
+    validator.print_tree()

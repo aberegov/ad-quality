@@ -7,7 +7,7 @@ class ViewabilityValidator(AbstractViewabilitySimulator):
 
     def process_row(self, row, view):
         cost = float(row[-2])
-        self.append([cost, -1 if cost == 4.83 else cost / 7.0, view] + list(row[1:-2]))
+        self.append(list(row[1:-2]) + [view, cost, -1 if cost == 4.83 else cost / 7.0])
 
 
 if __name__ == '__main__':

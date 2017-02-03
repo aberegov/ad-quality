@@ -42,7 +42,7 @@ class AbstractViewabilitySimulator(metaclass=ABCMeta):
         self.logger.info('Processing rows')
         try:
             shell = SQLShell()
-            self.run(shell.iterate(sql.format(str(self.predictor.multi_key),self.source), {}))
+            self.run(shell.iterate(sql.format(str(self.predictor.multi_key), self.source), {}))
         finally:
             shell.close()
 
@@ -62,11 +62,14 @@ class AbstractViewabilitySimulator(metaclass=ABCMeta):
     def process_row(self, row, view):
         pass
 
+    def print_tree(self):
+        print(self.predictor)
+
     def output(self):
         path = os.path.normpath(os.path.join(os.path.expanduser("~"), 'view_results.csv'))
         with open(path, "w") as out_file:
             writer = csv.writer(out_file,  delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
-            writer.writerow(['ecpm_usd', 'ecpm_view', 'predictor'] + self.predictor.multi_key.keys)
+            writer.writerow(self.predictor.multi_key.keys + ['predictor', 'data_0', 'data_1'])
             for row in self.results['data']:
                 writer.writerow(row)
 

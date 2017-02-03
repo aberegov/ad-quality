@@ -20,4 +20,5 @@ class MultiKeyPredictor(DatabaseTree):
         return [row[0]] + self.multi_key.reorder(row[0], row[1:-1]) + [row[-1]]
 
     def predict(self, name, data):
-        return self.match_path([name] + self.multi_key.reorder(name, data)).value
+        node = self.match_path([name] + self.multi_key.reorder(name, data))
+        return -1 if node is None else node.value
