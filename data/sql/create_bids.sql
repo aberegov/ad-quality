@@ -37,7 +37,7 @@ CREATE VIEW
         device,
         test,
         ecpm_usd
-    FROM ad_quality.impressions
+    FROM ad_quality.bids
     );
 
 ALTER TABLE ad_quality.bids_view OWNER TO aberegov;

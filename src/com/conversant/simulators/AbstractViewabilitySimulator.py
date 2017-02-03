@@ -65,6 +65,10 @@ class AbstractViewabilitySimulator(metaclass=ABCMeta):
     def print_tree(self):
         print(self.predictor)
 
+    def get_data_file(self, name):
+        return os.path.normpath(
+            os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../../../data/%s' % name))
+
     def output(self):
         path = os.path.normpath(os.path.join(os.path.expanduser("~"), 'view_results.csv'))
         with open(path, "w") as out_file:

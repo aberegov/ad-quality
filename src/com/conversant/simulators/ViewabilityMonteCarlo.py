@@ -1,5 +1,7 @@
 from random import randint
 from collections import OrderedDict
+import json
+import os
 from com.conversant.simulators.AbstractViewabilitySimulator import AbstractViewabilitySimulator
 
 
@@ -9,23 +11,14 @@ class ViewabilityMonteCarlo(AbstractViewabilitySimulator):
         self.track = set()
 
     def generate(self):
+        self.logger.info("Generating random inputs")
         # ad_format_id,network_id,seller_id,site_id,media_size,ad_position,device,os,browser_name,browser_version
-        inputs = {
-            '0ad_format_id'      : ['18', '52', '20', '17', '0'],
-            '1network_id'        : ['12783', '15900', '1982', '12783', '12783', '243', '14200', '14100', '14000', '14000', '12783'],
-            '2seller_id'         : ['9336', '69173', '311', '10738', '209874', '38488', '560747', '3932', '208724'],
-            '3site_id'           : ['16312', '76446', '1216817', '45026', '2038105', '85743'],
-            '4media_size'        : ['11', '18', '21'],
-            '5ad_position'       : ['0', '1'],
-            '6device'            : ['Table', 'iPhone', 'Other'],
-            '7os'                : ['Android 5.x', 'Windows 10', 'Windows 7', 'iOS 8.2', 'Mac OS X', 'Windows 8.1'],
-            '8browser_name'      : ['Chrome', 'Chrome Mobile', 'Firefox', 'Apple WebKit', 'Safari', 'Internet Explorer'],
-            '9browser_version'   : ['51', '45', '49', '6', '13', '54', '11', '43']
-        }
+        with open(self.get_data_file('json/keys.json')) as data_file:
+            inputs = json.load(data_file)
 
         inputs = OrderedDict(sorted(inputs.items(), key=lambda t: t[0]))
 
-        for s in range(1000):
+        for s in range(100):
             row = [0]
             for name in inputs:
                 ln = len(inputs[name])
