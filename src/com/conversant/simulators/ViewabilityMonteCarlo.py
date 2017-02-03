@@ -1,7 +1,9 @@
 from random import randint
 from collections import OrderedDict
 import json
+import networkx as nx
 import os
+import matplotlib.pyplot as plt
 from com.conversant.simulators.AbstractViewabilitySimulator import AbstractViewabilitySimulator
 
 
@@ -34,9 +36,27 @@ class ViewabilityMonteCarlo(AbstractViewabilitySimulator):
                 self.append(row[1:-2] + [view])
                 self.track.add(view)
 
+    def draw_tree(self):
+        G = nx.DiGraph()
+        self.draw_tree_iter(G, self.predictor.root_node())
+        nx.shell_layout(G)
+        nx.write_gml(G,  os.path.normpath(os.path.join(os.path.expanduser("~"), 'mk_tree.gml')), self.gml_stringizer)
+
+    def draw_tree_iter(self, G, node, count=0):
+        count = count + 1
+        G.add_node(node)
+        node.level = count
+        for child_name, child_nid in node.children.items():
+            child = self.predictor[child_nid]
+            count = self.draw_tree_iter(G, child, count)
+            G.add_edge(node, child)
+        return count
+
+    def gml_stringizer(self,node):
+        return "%d:%s" % (node.level, node.name)
 
 if __name__ == '__main__':
     validator = ViewabilityMonteCarlo()
     validator.generate()
     validator.output()
-    validator.print_tree()
+    validator.draw_tree()

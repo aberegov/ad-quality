@@ -18,6 +18,9 @@ class Tree(object):
         self.root_nid = None
         self.nodes = {}
 
+    def root_node(self):
+        return self[self.root_nid]
+
     def get_node(self, nid):
         return self.nodes[nid] if nid in self.nodes else None
 

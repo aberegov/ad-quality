@@ -16,6 +16,9 @@ class Node(object):
         self.children.update({node.name: node.identifier})
         node.set_parent(self.identifier)
 
+    def __hash__(self):
+        return self.identifier.__hash__()
+
     def __repr__(self):
         name = self.__class__.__name__
         args = [
