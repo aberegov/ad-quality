@@ -68,14 +68,14 @@ Key Classes
 ===========
 It is expected that you will need to modify some classes to extend simulations to fit specific needs.
 The below is a list of key classes with short descriptions. This should be helpful for making modifications:
-    * com.conversant.simulators.ViewabilitySimulator    - simulates targeting to viewability
-    * com.conversant.viewability.ViewabilityController  - a simple PID (only P) controller to hit viewability goals
-    * com.conversant.viewability.MultiKeyPredictor      - multi-key viewability predictors
-    * com.conversant.viewability.MultiKey               - multi-key
-    * com.conversant.common.KeyHierarchy                - manages ordered keys and their permutations
-    * com.conversant.common.Tree                        - a tree structure with support of wildcard matching
-    * com.conversant.common.DatabaseTree                - a tree structure built from table's data
-    * com.conversant.common.SQLShell                    - provides access to database
+* com.conversant.simulators.ViewabilitySimulator    - simulates targeting to viewability
+* com.conversant.viewability.ViewabilityController  - a simple PID (only P) controller to hit viewability goals
+* com.conversant.viewability.MultiKeyPredictor      - multi-key viewability predictors
+* com.conversant.viewability.MultiKey               - multi-key
+* com.conversant.common.KeyHierarchy                - manages ordered keys and their permutations
+* com.conversant.common.Tree                        - a tree structure with support of wildcard matching
+* com.conversant.common.DatabaseTree                - a tree structure built from table's data
+* com.conversant.common.SQLShell                    - provides access to database
 
 
 
