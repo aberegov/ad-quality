@@ -1,7 +1,11 @@
+Ad Quality Simualtions
+======================
+[![Build Status](https://api.travis-ci.org/aberegov/ad-quality.png?branch=master)](https://api.travis-ci.org/aberegov/ad-quality)
+
 Running simulations is easy but it takes some time to prepare the data.
 
 Data Preparation
-================
+----------------
 I would recommend using a local copy of Postgres database for the simulation data.
 
 1) Create a schema for the simulation data
@@ -28,7 +32,7 @@ vrd_prd => \q
 ```
 
 Python Environment
-==================
+-------------------
 
 To configure the python environment two steps are required:
     (1) Install required python packages
@@ -44,7 +48,9 @@ Install the following packages
 You may get an error while installing any of the above packages because of an old version of pip.
 To upgrade pip use the following command:
 
+```shell
 > python -m pip install --upgrade pip
+```
 
 Configuration
 -----------------------
@@ -62,12 +68,12 @@ measurability=ad_format_id,device,os,browser_name,browser_version,media_size,net
 ```
 
 Running Simulations
-===================
+-------------------
 Run python script com.conversant.simulators.ViewabilitySimulator.py
 
 
 Key Classes
-===========
+-----------
 It is expected that you will need to modify some classes to extend simulations to fit specific needs.
 The below is a list of key classes with short descriptions. This should be helpful for making modifications:
 * com.conversant.simulators.ViewabilitySimulator    - simulates targeting to viewability
