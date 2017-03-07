@@ -6,8 +6,16 @@ class ViewabilityValidator(AbstractViewabilitySimulator):
         super().__init__(source)
 
     def process_row(self, row, view):
+        special_values = {2.52: None, 2.66 : -1, 2.80: 1, 2.94 : -100, 3.08 : 0, 3.22: 100}
+
         cost = float(row[-2])
-        self.append(list(row[1:-2]) + [view, cost, -1 if cost == 4.83 else cost / 7.0])
+
+        try:
+            p = special_values[cost]
+        except KeyError:
+            p = cost / 7.0
+
+        self.append(list(row[1:-2]) + [view, p, cost])
 
 
 if __name__ == '__main__':
