@@ -38,11 +38,13 @@ class AbstractViewabilitySimulator(metaclass=ABCMeta):
             os.path.join(os.path.expanduser("~"),
                          'multi_key_predictors_%s.data' % MultiKeyPredictor.serialization_version))
 
-    def execute(self, sql):
+    def execute(self, sql, max_rows=-1):
         self.logger.info('Processing rows')
         try:
             shell = SQLShell()
-            self.run(shell.iterate(sql.format(str(self.predictor.multi_key), self.source), {}))
+            stmt = sql.format(str(self.predictor.multi_key), self.source)
+            print(stmt)
+            self.run(shell.iterate(stmt, {}, max_rows))
         finally:
             shell.close()
 
@@ -51,7 +53,10 @@ class AbstractViewabilitySimulator(metaclass=ABCMeta):
             self.handle_row(i)
 
     def handle_row(self, row):
-        self.process_row(row, float(self.predictor.predict(PredictorEnum.in_view.value, row[1:-2])))
+        self.process_row(row, float(self.predictor.predict(PredictorEnum.in_view.value, self.extract_key(row))))
+
+    def extract_key(self, row):
+        return row[1:-2]
 
     def append(self, row, tag='data'):
         if tag not in self.results:
@@ -69,11 +74,11 @@ class AbstractViewabilitySimulator(metaclass=ABCMeta):
         return os.path.normpath(
             os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../../../data/%s' % name))
 
-    def output(self):
+    def output(self,add_headers=[]):
         path = os.path.normpath(os.path.join(os.path.expanduser("~"), 'view_results.csv'))
         with open(path, "w") as out_file:
             writer = csv.writer(out_file,  delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
-            writer.writerow(self.predictor.multi_key.keys + ['predictor', 'data_0', 'data_1'])
+            writer.writerow(self.predictor.multi_key.keys + add_headers)
             for row in self.results['data']:
                 writer.writerow(row)
 

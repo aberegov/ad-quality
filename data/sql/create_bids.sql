@@ -1,7 +1,10 @@
+DROP VIEW ad_quality.bids_view;
+
+DROP TABLE ad_quality.bids;
+
 CREATE TABLE
     ad_quality.bids
     (
-        transaction_nbr BIGINT,
         network_id INTEGER,
         seller_id CHARACTER VARYING(100),
         site_id TEXT,
@@ -13,8 +16,8 @@ CREATE TABLE
         browser_version CHARACTER VARYING(100),
         os CHARACTER VARYING(100),
         device CHARACTER VARYING(100),
-        test NUMERIC(12,5),
-        ecpm_usd NUMERIC(12,5)
+        user_agent CHARACTER VARYING(1000),
+        dtm_id NUMERIC(20)
     );
 
 ALTER TABLE ad_quality.bids OWNER TO aberegov;
@@ -23,7 +26,6 @@ CREATE VIEW
     ad_quality.bids_view AS
     (
     SELECT
-        transaction_nbr,
         network_id,
         seller_id,
         site_id,
@@ -35,8 +37,8 @@ CREATE VIEW
         browser_version,
         os,
         device,
-        test,
-        ecpm_usd
+        user_agent,
+        dtm_id
     FROM ad_quality.bids
     );
 
