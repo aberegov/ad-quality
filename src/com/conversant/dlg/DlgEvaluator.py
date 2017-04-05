@@ -6,7 +6,9 @@ class DlgEvaluator:
     params = {}
     req_str = None
 
-    def __init__(self, endpoint='http://dtiad08dma23p.dc.dotomi.net:7070/dma_evaluatedlg.do'):
+#
+    # dtiad08dma23p
+    def __init__(self, endpoint='http://dtiad04dma07p.dc.dotomi.net:7070/dma_evaluatedlg.do'):
         self.endpoint = endpoint
         self.set_params(level=0,type='ULM_ecpm',submit='Test')
 

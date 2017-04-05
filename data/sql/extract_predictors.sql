@@ -20,3 +20,19 @@ FROM
 
 
 
+SELECT
+    vendor_id
+     ,network_id
+     ,seller_id
+     ,site_id
+     ,ad_format_id
+     ,media_size
+     ,ad_position
+     ,browser_name
+     ,browser_version
+     ,os
+     ,device
+     ,predictor_type
+     ,predictor_value
+     ,confidence_score
+FROM dm.viewability_predictors;

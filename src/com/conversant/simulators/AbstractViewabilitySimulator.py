@@ -77,7 +77,7 @@ class AbstractViewabilitySimulator(metaclass=ABCMeta):
     def output(self,add_headers=[]):
         path = os.path.normpath(os.path.join(os.path.expanduser("~"), 'view_results.csv'))
         with open(path, "w") as out_file:
-            writer = csv.writer(out_file,  delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
+            writer = csv.writer(out_file,  delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
             writer.writerow(self.predictor.multi_key.keys + add_headers)
             for row in self.results['data']:
                 writer.writerow(row)

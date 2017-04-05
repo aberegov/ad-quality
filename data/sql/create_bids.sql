@@ -16,6 +16,8 @@ CREATE TABLE
         browser_version CHARACTER VARYING(100),
         os CHARACTER VARYING(100),
         device CHARACTER VARYING(100),
+        company_id INTEGER,
+        campaign_id INTEGER,
         user_agent CHARACTER VARYING(1000),
         dtm_id NUMERIC(20)
     );
@@ -37,6 +39,8 @@ CREATE VIEW
         browser_version,
         os,
         device,
+        company_id,
+        campaign_id,
         user_agent,
         dtm_id
     FROM ad_quality.bids
