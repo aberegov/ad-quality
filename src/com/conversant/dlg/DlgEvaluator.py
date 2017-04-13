@@ -2,13 +2,11 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 class DlgEvaluator:
-    response = None
-    params = {}
-    req_str = None
-
-#
-    # dtiad08dma23p
+   # dtiad08dma23p
     def __init__(self, endpoint='http://dtiad04dma07p.dc.dotomi.net:7070/dma_evaluatedlg.do'):
+        self.response = None
+        self.params = {}
+        self.req_str = None
         self.endpoint = endpoint
         self.set_params(level=0,type='ULM_ecpm',submit='Test')
 

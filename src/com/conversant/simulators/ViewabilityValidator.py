@@ -22,11 +22,15 @@ class ViewabilityValidator(AbstractViewabilitySimulator):
             'request_type_id': int(row[0]) >> 4,
             'supply_type_id': int(row[0]) & 0xf,
             'network_id': int(row[1]),
-            'seller_id': quote_plus(row[2]),
-            'site_id': quote_plus(row[3]),
             'media_size': int(row[4]),
             'ad_position': int(row[5])
         })
+
+        if row[2] != '(null)':
+            eval.set_params(seller_id = quote_plus(row[2]))
+
+        if row[3] != '(null)':
+            eval.set_params(site_id = quote_plus(row[3]))
 
         eval.evaluate()
         dlg = eval.get_data().decode("utf-8")
@@ -42,5 +46,5 @@ class ViewabilityValidator(AbstractViewabilitySimulator):
 
 if __name__ == '__main__':
     validator = ViewabilityValidator()
-    validator.execute("SELECT {0}, company_id, campaign_id, user_agent, dtm_id FROM {1} WHERE dtm_id is not NULL", 10)
+    validator.execute("SELECT {0}, company_id, campaign_id, user_agent, dtm_id FROM {1} WHERE dtm_id is not NULL", 10000)
     validator.output(['predictor', 'from dlg', 'match', 'user agent', 'dlg call'])
