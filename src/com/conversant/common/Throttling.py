@@ -1,30 +1,38 @@
 from random import random
-class Throttling:
-    size = 3600 * 24
 
-    def __init__(self, cap, win=0.03):
+
+class Throttling:
+    def __init__(self, cap, win_rate=0.03, period=5000):
         self.value = 0.5
-        self.win = win
+        self.win_rate = win_rate
         self.cap = cap
         self.window = []
-        self.count = 0
         self.results = []
+        self.period = period
 
-    def tick(self, n_events):
-        d = n_events * self.win if random() < self.value else 0
+    def tick(self, n_bids):
+        # simulate biddy/exchange/nessy
+        n_impressions = 0
+        for i in range(n_bids):
+            n_impressions += self.win_rate if random() <= self.value else 0
 
-        self.window.append(d)
-        if len(self.window) > self.size:
-            self.window.pop(0)
+        # simulate maelstrom
+        self.window.insert(0, [n_impressions, n_impressions / self.value])
+        if len(self.window) > self.period:
+            self.window.pop()
 
-        s = sum(self.window)
-        if s > 0 and self.value > 1e-20:
-            self.value = min(1, min(1, (self.cap / (s / self.value))) * pow(min(1, self.cap / s), 8))
-        else:
-            self.value = 0.000001
+        # impression_stats[0] impressions over period
+        # impression_stats[1] available impressions over period
+        impression_stats = [sum(i) for i in zip(*self.window)]
 
-        print(s, self.value, len(self.window))
+        # throttle = (cap / available) x correction
+        # correction = min(1, cap / spend) ^ 8
+        if impression_stats[0] > 0 and impression_stats[1] > 0:
+            # simulate DMA
+            self.value = min(1, (self.cap / impression_stats[1])) * pow(min(1, self.cap / impression_stats[0]), 8)
 
-        self.count += 1
-        if self.count % 3600 == 0:
-            self.results.append(s)
+        self.results.append([impression_stats[0], self.cap, n_bids])
+
+    def __del__(self):
+        del self.window
+        del self.results
