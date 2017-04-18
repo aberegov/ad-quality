@@ -22,11 +22,11 @@ class TrafficGeneratorTestCase(unittest.TestCase):
 
         for i in self.generator.d:
             count += 1
-            if count % (self.throttle.period / 2) == 0:
-                win_rate = win_rate * 1.5 if random() <= 0.5 else win_rate / 1.5
+            if count % (self.throttle.period / 4) == 0:
+                win_rate = win_rate * 1.5 if random() <= 0.7 else win_rate / 1.5
 
             self.throttle.tick(int(i), win_rate=win_rate)
 
         plots = pyplot.plot(range(len(self.throttle.results)), self.throttle.results, marker='.')
-        pyplot.legend(iter(plots), ('spend', 'cap', 'opportunities'))
+        pyplot.legend(iter(plots), ('daily spend', 'daily cap', 'bid req'))
         pyplot.show()
