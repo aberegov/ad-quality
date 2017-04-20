@@ -16,7 +16,8 @@ class Throttling:
             n_impressions += win_rate if random() <= self.value else 0
 
         # simulate maelstrom
-        d = [n_impressions, n_impressions / self.value]
+        a = n_impressions / self.value
+        d = [n_impressions, a]
         self.window.insert(0, d)
         if len(self.window) > self.period:
             self.window.pop()
@@ -30,12 +31,11 @@ class Throttling:
         if impression_stats[0] > 0 and impression_stats[1] > 0:
             # simulate DMA
             t = min(1, (self.cap / impression_stats[1]))
-            c =  pow(min(1, self.cap / impression_stats[0]), 8)
+            c = pow(min(1, self.cap / impression_stats[0]), 8)
             self.value = t * c
-            print(impression_stats[0], t,c)
 
         if len(self.window) == self.period:
-            self.results.append([impression_stats[0], self.cap, n_bids])
+            self.results.append([self.cap, impression_stats[1],impression_stats[0] - 5])
 
     def __del__(self):
         del self.window
