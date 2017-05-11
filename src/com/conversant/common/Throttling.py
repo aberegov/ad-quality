@@ -1,6 +1,7 @@
 from random import random
 import pandas as pd
 
+
 class Throttling:
     def __init__(self, cap,  period=5000):
         self.value = 0.5
@@ -31,11 +32,11 @@ class Throttling:
         if impression_stats[0] > 0 and impression_stats[1] > 0:
             # simulate DMA
             t = min(1, (self.cap / impression_stats[1]))
-            c = pow(min(1, self.cap / impression_stats[0]), 8)
+            c = pow(min(1, self.cap / impression_stats[0]), 10)
             self.value = t * c
 
         if len(self.window) == self.period:
-            self.results.append([self.cap, impression_stats[1],impression_stats[0] - 5])
+            self.results.append([n_impressions, self.cap, impression_stats[1],impression_stats[0] - 5])
 
     def __del__(self):
         del self.window

@@ -10,13 +10,13 @@ class TrafficGenerator:
         self.min_traffic = min_traffic
 
     def gen_period(self, n_periods=10, tick_per_period=5000):
-        w = pi / tick_per_period
+        w = 2 * pi / tick_per_period
 
         for i in range(tick_per_period * n_periods):
             amplitude = (self.max_traffic - self.min_traffic) * (1 + self.noise_to_signal * random())
-            periodic = abs(sin((w + 0.00001 * random()) * i))
+            periodic = (sin((w + 0.00001 * random()) * i))
 
-            self.d.append(amplitude * periodic + self.min_traffic)
+            self.d.append(amplitude * periodic + self.max_traffic)
 
     def __del__(self):
         del self.d
